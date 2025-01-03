@@ -1,5 +1,5 @@
 from simulation.utils import ModelWandbWrapper
-from pathfinder import assistant, system, user
+
 
 from ..common import PersonaIdentity
 from .component import Component

@@ -1,6 +1,7 @@
 import datetime
 import logging
 import os
+from typing import Dict
 
 import wandb
 
@@ -166,7 +167,7 @@ class WandbLogger:
 
         chain_agent.add_child(chain_span)
 
-    def save(self, base_path, agent_name_to_id: dict[str, str]):
+    def save(self, base_path, agent_name_to_id: Dict[str, str]):
         for k, v in self.html_logs.items():
             html = f"""
                     <html>
@@ -174,14 +175,12 @@ class WandbLogger:
                     <title>{k}</title>
                     </head>
                     <body>
-                    <h1>{k}</h1>
-            """
-            for i in v:
-                html += i
-            html += "</body></html>"
-            path = os.path.join(base_path, agent_name_to_id[k], f"prompts.pdf")
-            os.makedirs(os.path.dirname(path), exist_ok=True)
-            # weasyprint.HTML(string=html).write_pdf(path)
+                    {v}
+                    </body>
+                    </html>
+                    """
+            with open(os.path.join(base_path, f"{agent_name_to_id[k]}.html"), "w") as f:
+                f.write(html)
 
     def log_game(self, kwargs, last_log=False):
         if last_log and self.current_agent_span is not None:

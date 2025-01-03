@@ -1,0 +1,23 @@
+# Login and setup
+ssh anna8282@cedar.computecanada.ca
+cd /project/6098391/GovSim
+module load python/3.9 cuda/11.7 torch/2.0.1
+source venv/bin/activate
+
+# Create run script
+cat > run_govsim.sh << 'EOF'
+#!/bin/bash
+#SBATCH --account=def-zhijing
+#SBATCH --gres=gpu:1        # Request GPU
+#SBATCH --mem=32G          # Memory
+#SBATCH --time=2:00:00     # Time limit (2 hours)
+#SBATCH --output=%j.out    # Output file
+
+source venv/bin/activate
+python3 -m subskills.fishing.run llm.path=mistralai/Mistral-7B-Instruct-v0.2
+EOF
+
+# Submit and monitor
+sbatch run_govsim.sh
+squeue -u anna8282
+tail -f slurm-$(squeue -u anna8282 -h -o "%i").out

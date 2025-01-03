@@ -2,7 +2,7 @@ name: fishing_${code_version}/${group_name}
 scenario: fishing
 
 defaults:
-  - persona@personas.persona_0: baseline_fisherman
+  - persona@personas.persona_0: leader_fisherman
   - persona@personas.persona_1: baseline_fisherman
   - persona@personas.persona_2: baseline_fisherman
   - persona@personas.persona_3: baseline_fisherman
@@ -30,7 +30,7 @@ env:
 personas:
   num: 5
   persona_0: 
-    name: John
+    name: Leader
   persona_1:
     name: Kate
   persona_2:

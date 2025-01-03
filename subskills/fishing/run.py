@@ -2,6 +2,8 @@ import json
 import os
 import shutil
 import uuid
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import hydra
 import numpy as np

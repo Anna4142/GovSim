@@ -1,7 +1,7 @@
 import typing
 
 from simulation.utils import ModelWandbWrapper
-from pathfinder import assistant, system, user
+
 
 from .component import Component
 

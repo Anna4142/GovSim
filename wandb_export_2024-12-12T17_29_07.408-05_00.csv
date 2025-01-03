@@ -1,0 +1,72 @@
+Success,experiment/tracetraceSummaryDict[startTime],Timestamp,Input,Output,Chain,Error,Model ID,experiment/TFS,experiment/token_out_cumulative,experiment/token_in_cumulative,experiment/TFS_cumulative
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"John(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,58.12458745,292,606,58.08670895
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Emma(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,59.17640824,633,1255,58.65274498
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Luke(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,60.74238539,944,1880,59.32903258
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Emma(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,68.00440518,1172,2422,60.99598108
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Luke(fishing_cognition_act::prompt_shrinking_limit(reasoning, option), fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,67.30990791,1634,3515,62.77417861
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Jack(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,54.8331119,2044,4203,61.21585204
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Luke(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,61.46146416,2351,4824,61.24742048
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Emma(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,61.12221323,2658,5445,61.23298106
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Luke(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,74.14774962,2833,5929,62.04570705
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Jack(fishing_cognition_act::prompt_shrinking_limit(reasoning, option), fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,59.82261965,3459,7149,61.64699145
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Emma(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,61.32483447,3754,7758,61.62151409
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Kate(fishing_cognition_act::prompt_shrinking_limit(reasoning, option), fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,60.11429269,4347,8930,61.41676231
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Luke(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,73.26292584,4522,9414,61.88993691
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"John(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,58.65674515,4879,10085,61.65642257
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Luke(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,56.55841305,5266,10780,61.28389743
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Emma(fishing_cognition_act::prompt_shrinking_limit(reasoning, option), fishing_cognition_act::prompt_shrinking_limit(reasoning, option), fishing_cognition_act::prompt_shrinking_limit(reasoning, option), fishing_cognition_act::prompt_shrinking_limit(reasoning, option), fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,57.46977276,7056,14074,60.32064327
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Jack(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,64.22086572,7322,14656,60.4622921
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Kate(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,57.60391653,7699,15347,60.32354734
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Emma(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,62.1084553,7994,15956,60.38902962
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"John(fishing_cognition_act::prompt_shrinking_limit(reasoning, option), fishing_cognition_act::prompt_shrinking_limit(reasoning, option), fishing_cognition_act::prompt_shrinking_limit(reasoning, option), fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,62.4446044,9119,18323,60.64303201
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Jack(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,55.71085842,9549,19068,60.42336759
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"John(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,69.29037743,9752,19574,60.61085634
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Emma(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,64.65529977,10004,20141,60.71401957
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Luke(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,58.13906058,10345,20790,60.62861627
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"John(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,60.97863349,10651,21411,60.6386608
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Jack(fishing_cognition_act::prompt_shrinking_limit(reasoning, option), fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,57.716265,11296,22601,60.47288275
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"John(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,61.12944658,11602,23222,60.49016032
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Luke(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,64.42114136,11861,23795,60.57639526
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"John(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,63.61971872,12126,24376,60.6436127
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Jack(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,61.27893249,12433,24997,60.65918743
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Kate(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,55.55159985,12816,25658,60.50820889
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Emma(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,64.86009421,13075,26231,60.59425278
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Jack(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,59.36664663,13417,26887,60.56322796
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"John(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,67.45868662,13648,27432,60.68037954
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Emma(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,60.48063824,13968,28066,60.67581723
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"John(fishing_cognition_act::prompt_shrinking_limit(reasoning, option), fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,61.31610375,14873,29071,60.70335456
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Kate(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,60.07485304,15146,29609,60.69183474
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Emma(fishing_cognition_act::prompt_shrinking_limit(reasoning, option), fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,66.11950289,15625,30699,60.861037
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Kate(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,50.56548751,16294,31678,60.43828145
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Jack(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,56.18010659,16697,32383,60.33503012
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"John(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,58.61959509,17057,33052,60.29878233
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Luke(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,62.10064226,17349,33658,60.32958867
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"John(fishing_cognition_act::prompt_shrinking_limit(reasoning, option), fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,61.23244705,17897,34785,60.35787254
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Jack(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,69.07539437,18100,35291,60.45918523
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"John(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,67.90863431,18327,35832,60.5533679
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Kate(fishing_cognition_act::prompt_shrinking_limit(reasoning, option), fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,56.91900575,19040,37109,60.4166339
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Emma(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,54.7886191,19379,37678,60.31802083
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Luke(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,56.08350517,19800,38413,60.22770777
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"John(fishing_cognition_act::prompt_shrinking_limit(reasoning, option), fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,73.7953199,20169,39411,60.48283571
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Jack(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,69.52658239,20376,39926,60.57716937
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Kate(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,64.31636706,20641,40507,60.62592381
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Luke(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,60.36522691,20914,41045,60.62248773
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Emma(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,58.67146705,21215,41611,60.59467129
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Kate(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,63.46647325,21486,42187,60.631157
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Emma(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,62.22995994,21773,42788,60.65258065
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Jack(fishing_cognition_act::prompt_shrinking_limit(reasoning, option), fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,61.37012944,22333,43927,60.67076128
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"John(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,50.85839724,22822,44646,60.46188842
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Luke(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,58.32315033,23183,45321,60.42836786
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Emma(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,58.42609338,23543,45990,60.39772794
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Kate(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,57.56470252,23917,46672,60.35328479
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Jack(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,49.04343815,24759,47828,59.9725916
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"John(fishing_cognition_act::prompt_shrinking_limit(reasoning, option), fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,59.20896443,25454,49152,59.95165807
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Emma(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,50.88198144,26123,50131,59.72158278
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Jack(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,60.11055826,26449,50765,59.7263794
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Luke(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,58.85616103,26790,51414,59.71519468
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Jack(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,61.00695911,27101,52039,59.73014551
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Emma(fishing_cognition_act::prompt_shrinking_limit(reasoning, option), fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,59.00950644,27751,53282,59.71310223
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Jack(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,61.39778753,28057,53903,59.73163247
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Emma(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,56.46452048,28467,54627,59.68449606
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Jack(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,65.76902813,28714,55188,59.73771101
+TRUE,null,null,**0.phase:** fishing_cognition_act,,"Kate(fishing_cognition_act::prompt_shrinking_limit(reasoning, option))",null,null,65.48065917,28966,55755,59.78839548

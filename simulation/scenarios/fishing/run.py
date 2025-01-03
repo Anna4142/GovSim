@@ -19,6 +19,7 @@ def run(
 ):
     if cfg.agent.agent_package == "persona_v3":
         from .agents.persona_v3 import FishingPersona
+        from .agents.persona_leader import LeaderPersona  # Add import for leader
         from .agents.persona_v3.cognition import utils as cognition_utils
 
         if cfg.agent.system_prompt == "v3":
@@ -34,15 +35,25 @@ def run(
     else:
         raise ValueError(f"Unknown agent package: {cfg.agent.agent_package}")
 
-    personas = {
-        f"persona_{i}": FishingPersona(
-            cfg.agent,
-            wrapper,
-            embedding_model,
-            os.path.join(experiment_storage, f"persona_{i}"),
-        )
-        for i in range(5)
-    }
+    # Create personas with leader as persona_0
+    personas = {}
+    for i in range(5):
+        if i == 0 and cfg.personas.persona_0.name == "Leader":
+            # Use LeaderPersona for persona_0 if it's configured as leader
+            personas[f"persona_{i}"] = LeaderPersona(
+                cfg.agent,
+                wrapper,
+                embedding_model,
+                os.path.join(experiment_storage, f"persona_{i}"),
+            )
+        else:
+            # Use regular FishingPersona for others
+            personas[f"persona_{i}"] = FishingPersona(
+                cfg.agent,
+                wrapper,
+                embedding_model,
+                os.path.join(experiment_storage, f"persona_{i}"),
+            )
 
     # NOTE persona characteristics, up to design choices
     num_personas = cfg.personas.num

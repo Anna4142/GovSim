@@ -1,1 +1,1 @@
-from .persona import FishingPersona
+from .persona import LeaderPersona

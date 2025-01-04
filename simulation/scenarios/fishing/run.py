@@ -19,7 +19,7 @@ def run(
 ):
     if cfg.agent.agent_package == "persona_v3":
         from .agents.persona_v3 import FishingPersona
-        from .agents.persona_leader import LeaderPersona  # Add import for leader
+        from .agents.persona_leader import LeaderPersona # Add import for leader
         from .agents.persona_v3.cognition import utils as cognition_utils
 
         if cfg.agent.system_prompt == "v3":

@@ -32,7 +32,7 @@ from .cognition import (
 )
 
 
-class FishingPersona(PersonaAgent):
+class LeaderPersona(PersonaAgent):
     last_collected_resource_num: int
     other_personas: dict[str, "FishingPersona"]
 

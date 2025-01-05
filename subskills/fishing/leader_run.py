@@ -92,8 +92,30 @@ def main(cfg: DictConfig):
         seed=cfg.seed,
         is_api=cfg.llm.is_api,
     )
+    if cfg.llm.out_format == "freeform":
+        from .reasoning_free_format import (
+            prompt_action_choose_amount_of_fish_to_catch,
+            prompt_action_choose_amount_of_fish_to_catch_universalization,
+            prompt_reflection_if_all_fisher_that_same_quantity,
+            prompt_shrinking_limit,
+            prompt_shrinking_limit_asumption,
+            prompt_simple_reflection_if_all_fisher_that_same_quantity,
+            prompt_simple_shrinking_limit,
+            prompt_simple_shrinking_limit_assumption,
+            prompt_leader_group_fishing_recommendation,
+            prompt_group_total_catch,
+        )
+    else:
+        # We found freefrom makes more sense, since we don't destory the model's output probability distribqution
+        raise ValueError(f"Unknown out_format: {cfg.llm.out_format}")
 
-    cot_prompt = "Let's think step-by-step about this leadership decision."
+
+    if cfg.llm.cot_prompt == "deep_breath":
+        cot_prompt = "Take a deep breath and work on this problem step-by-step."
+    elif cfg.llm.cot_prompt == "think_step_by_step":
+        cot_prompt = "Let's think step-by-step."
+    else:
+        raise ValueError(f"Unknown cot_prompt: {cfg.llm.cot_prompt}")
 
     NUM_RUNS = 150
     if cfg.debug:
@@ -211,40 +233,28 @@ def main(cfg: DictConfig):
             ] * NUM_RUNS
 
         def prompt(self, *, leader, followers, num_tonnes_lake, num_tonnes_fisher, sustainability_focus, leadership_style):
-            # First get leader's recommendation
-            leader_prompt = f"""
-            As {leader.name}, you are a {leadership_style} leader responsible for guiding {len(followers)} people in fishing decisions.
-            The lake has {num_tonnes_lake} tonnes of fish.
-            {'You prioritize long-term sustainability and community well-being.' if sustainability_focus else 'You balance immediate needs with sustainability while considering economic factors.'}
-            
-            {cot_prompt}
-            
-            How many tonnes of fish should you recommend each person catches to maintain sustainable fishing while meeting community needs?
-            
-            Answer with just a number representing tonnes per person.
-            """
-            leader_recommendation, leader_html = wrapper.generate(leader_prompt)
-            
-            # Then simulate group behavior
-            group_prompt = f"""
-            The lake has {num_tonnes_lake} tonnes of fish.
-            There are {num_tonnes_fisher} fishers including the leader.
-            The leader {leader.name} has recommended each person catch {leader_recommendation} tonnes.
-            
-            {cot_prompt}
-            
-            Given this recommendation, how many tonnes will the entire group actually catch in total?
-            Consider:
-            1. Leader's influence
-            2. Group dynamics
-            3. Individual needs
-            
-            Answer with just a number for total tonnes caught by the group.
-            """
-            group_total, group_html = wrapper.generate(group_prompt)
-            
-            return group_total, leader_html + "\n" + group_html
-
+                # First get leader's recommendation
+                leader_recommendation, leader_html = prompt_leader_group_fishing_recommendation(
+                    wrapper,
+                    cot_prompt,
+                    leader,
+                    followers,
+                    num_tonnes_lake,
+                    leadership_style,
+                    sustainability_focus
+                )
+                
+                # Then simulate group behavior
+                group_total, group_html = prompt_group_total_catch(
+                    wrapper,
+                    cot_prompt,
+                    leader,
+                    followers,
+                    num_tonnes_lake,
+                    leader_recommendation
+                )
+                
+                return group_total, leader_html + "\n" + group_html
         def pass_condition(self, answer, leader, followers, num_tonnes_lake, num_tonnes_fisher, sustainability_focus, leadership_style):
             # Check both individual sustainable amount and group total
             correct_group_total = max(

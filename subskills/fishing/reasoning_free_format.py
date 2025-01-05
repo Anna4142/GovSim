@@ -457,3 +457,133 @@ def prompt_simple_reflection_if_all_fisher_that_same_quantity(
     model.end_chain(persona.name, lm)
 
     return option, lm.html()
+def prompt_leader_group_fishing_recommendation(
+    model: ModelWandbWrapper,
+    cot_prompt: str,
+    leader: PersonaIdentity,
+    followers: list[PersonaIdentity],
+    num_tons_lake: int,
+    leadership_style: str,
+    sustainability_focus: bool,
+    few_shots=0,
+    description_version="v1.0",
+):
+    lm = model.start_chain(
+        leader.name,
+        "fishing_leadership_act",
+        "prompt_leader_group_fishing_recommendation",
+    )
+
+    if description_version == "v1.0":
+        sys_prompt = get_sytem_prompt
+        scenario_desc = get_basic_dynamic_description
+    elif description_version == "v2.0":
+        sys_prompt = get_sytem_prompt_v2
+        scenario_desc = get_basic_dynamic_description_v2
+    elif description_version == "v3.0":
+        sys_prompt = get_sytem_prompt_v3
+        scenario_desc = get_basic_dynamic_description_v3
+    elif description_version == "v4.0":
+        sys_prompt = get_sytem_prompt_v4
+        scenario_desc = get_basic_dynamic_description_v4
+    else:
+        raise ValueError(f"Unknown description_version: {description_version}")
+
+    with user():
+        lm += sys_prompt(leader)
+        lm += f"""As a {leadership_style} leader, you are responsible for guiding {len(followers)} people in fishing decisions.
+The lake has {num_tons_lake} tonnes of fish.
+{'You prioritize long-term sustainability and community well-being.' if sustainability_focus else 'You balance immediate needs with sustainability while considering economic factors.'}
+
+{cot_prompt}
+
+How many tonnes of fish should you recommend each person catches to maintain sustainable fishing while meeting community needs?
+
+Answer with just a number representing tonnes per person."""
+
+    with assistant():
+        lm = model.gen(
+            lm,
+            "reasoning",
+            stop_regex=f"Answer:|So, the answer is:",
+            save_stop_text=True,
+        )
+        lm = model.find(
+            lm,
+            regex=r"\d+",
+            default_value="0",
+            name="option",
+        )
+        option = float(lm["option"])
+        reasoning = lm["reasoning"]
+
+    model.end_chain(leader.name, lm)
+
+    return option, lm.html()
+
+def prompt_group_total_catch(
+    model: ModelWandbWrapper,
+    cot_prompt: str,
+    leader: PersonaIdentity,
+    followers: list[PersonaIdentity],
+    num_tons_lake: int,
+    leader_recommendation: float,
+    few_shots=0,
+    description_version="v1.0",
+):
+    lm = model.start_chain(
+        leader.name,
+        "fishing_group_act",
+        "prompt_group_total_catch",
+    )
+
+    if description_version == "v1.0":
+        sys_prompt = get_sytem_prompt
+        scenario_desc = get_basic_dynamic_description
+    elif description_version == "v2.0":
+        sys_prompt = get_sytem_prompt_v2
+        scenario_desc = get_basic_dynamic_description_v2
+    elif description_version == "v3.0":
+        sys_prompt = get_sytem_prompt_v3
+        scenario_desc = get_basic_dynamic_description_v3
+    elif description_version == "v4.0":
+        sys_prompt = get_sytem_prompt_v4
+        scenario_desc = get_basic_dynamic_description_v4
+    else:
+        raise ValueError(f"Unknown description_version: {description_version}")
+
+    with user():
+        lm += sys_prompt(leader)
+        lm += f"""The lake has {num_tons_lake} tonnes of fish.
+There are {len(followers) + 1} fishers including the leader.
+The leader {leader.name} has recommended each person catch {leader_recommendation} tonnes.
+
+{cot_prompt}
+
+Given this recommendation, how many tonnes will the entire group actually catch in total?
+Consider:
+1. Leader's influence
+2. Group dynamics
+3. Individual needs
+
+Answer with just a number for total tonnes caught by the group."""
+
+    with assistant():
+        lm = model.gen(
+            lm,
+            "reasoning",
+            stop_regex=f"Answer:|So, the answer is:",
+            save_stop_text=True,
+        )
+        lm = model.find(
+            lm,
+            regex=r"\d+",
+            default_value="0",
+            name="option",
+        )
+        option = float(lm["option"])
+        reasoning = lm["reasoning"]
+
+    model.end_chain(leader.name, lm)
+
+    return option, lm.html()

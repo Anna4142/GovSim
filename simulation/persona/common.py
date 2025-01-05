@@ -3,6 +3,7 @@ class PersonaIdentity:
         self,
         agent_id: str,
         name: str,
+        role: str = None,
         age: int = None,
         innate_traits: str = None,
         background: str = None,
@@ -12,6 +13,7 @@ class PersonaIdentity:
     ) -> None:
         self.agent_id = agent_id
         self.name = name
+        self.role = role
         self.age = age
         self.innate_traits = innate_traits
         self.background = background
@@ -20,9 +22,10 @@ class PersonaIdentity:
         self.customs = customs
 
     def get_identiy_stable_set(self) -> str:
-        # Before we also used: lm += f"Here is a brief description of {persona.name}."
         res = "Consider the following persona:\n"
         res += f"- Name: {self.name}\n"
+        if self.role:
+            res += f"- Role: {self.role}\n"
         if self.age:
             res += f"- Age: {self.age}\n"
         if self.background:

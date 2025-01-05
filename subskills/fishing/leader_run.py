@@ -9,6 +9,8 @@ from transformers import set_seed
 import hydra
 from simulation.persona.common import PersonaIdentity
 from pathfinder import get_model
+from simulation.utils import ModelWandbWrapper, WandbLogger
+
 
 class LocalLogger:
     def __init__(self, name, config, debug=False):
@@ -81,10 +83,10 @@ def main(cfg: DictConfig):
     )
     os.makedirs(experiment_storage, exist_ok=True)
 
-    wrapper = ModelWrapper(
+    wrapper = ModelWandbWrapper(
         model,
         render=cfg.llm.render,
-        logger=logger,
+        wanbd_logger=logger,
         temperature=cfg.llm.temperature,
         top_p=cfg.llm.top_p,
         seed=cfg.seed,

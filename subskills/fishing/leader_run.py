@@ -71,10 +71,17 @@ def main(cfg: DictConfig):
     set_seed(cfg.seed)
 
     model = get_model(cfg.llm.path, cfg.llm.is_api, cfg.seed, cfg.llm.backend)
+    '''''
     logger = LocalLogger(
         f"subskills_check/fishing_leader/{cfg.code_version}",
         OmegaConf.to_object(cfg),
         debug=cfg.debug,
+    )
+    '''
+    logger = WandbLogger(
+    f"subskills_check/fishing_leader/{cfg.code_version}",
+    OmegaConf.to_object(cfg),
+    debug=cfg.debug,
     )
 
     experiment_storage = os.path.join(

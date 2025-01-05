@@ -200,19 +200,45 @@ def main(cfg: DictConfig):
                 "config": OmegaConf.to_object(cfg),
             }
             json.dump(test, open(f"{experiment_storage}/{self.name}.json", "w"))
+        def get_args_iterator(self):
+            raise NotImplementedError
 
+        def prompt(self, *, args):
+            raise NotImplementedError
         def serialize_args(self, args: dict[str, any]):
-            res = {}
-            for k, v in args.items():
-                if isinstance(v, PersonaIdentity):
-                    res[k] = {
-                        'name': v.name,
-                        'id': v.agent_id,
-                        'role': v.role
-                    }
-                else:
-                    res[k] = v
-            return res
+                    res = {}
+                    for k, v in args.items():
+                        if isinstance(v, PersonaIdentity):
+                            res[k] = {
+                                'agent_id': v.agent_id,
+                                'name': v.name,
+                                'role': v.role,
+                                'age': v.age,
+                                'innate_traits': v.innate_traits,
+                                'background': v.background,
+                                'goals': v.goals,
+                                'behavior': v.behavior,
+                                'customs': v.customs
+                            }
+                        elif isinstance(v, list):
+                            # Handle lists of PersonaIdentity objects
+                            res[k] = [
+                                {
+                                    'agent_id': item.agent_id,
+                                    'name': item.name,
+                                    'role': item.role,
+                                    'age': item.age,
+                                    'innate_traits': item.innate_traits,
+                                    'background': item.background,
+                                    'goals': item.goals,
+                                    'behavior': item.behavior,
+                                    'customs': item.customs
+                                } if isinstance(item, PersonaIdentity) else item 
+                                for item in v
+                            ]
+                        else:
+                            res[k] = v
+                    return res
 
     class LeaderGroupFishingTest(TestCase):
         def __init__(self, name="leader_group_fishing_test") -> None:

@@ -79,14 +79,14 @@ def main(cfg: DictConfig):
     )
     '''
     logger = WandbLogger(
-    f"subskills_check/fishing_leader/{cfg.code_version}",
+    f"subskills_check/fishing_leader1/{cfg.code_version}",
     OmegaConf.to_object(cfg),
     debug=cfg.debug,
     )
 
     experiment_storage = os.path.join(
         os.path.dirname(__file__),
-        f"./results/subskills_check_leader_{cfg.code_version}/{logger.run_name}",
+        f"./results/subskills_check_leader1_{cfg.code_version}/{logger.run_name}",
     )
     os.makedirs(experiment_storage, exist_ok=True)
 

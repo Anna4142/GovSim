@@ -7,10 +7,61 @@ import tqdm
 from omegaconf import DictConfig, OmegaConf
 from transformers import set_seed
 import hydra
-import wandb
 from simulation.persona.common import PersonaIdentity
-from simulation.utils import ModelWandbWrapper, WandbLogger
 from pathfinder import get_model
+
+class LocalLogger:
+    def __init__(self, name, config, debug=False):
+        self.name = name
+        self.config = config
+        self.debug = debug
+        self.logs = []
+        self.run_name = f"run_{uuid.uuid4()}"
+        
+    def log_metrics(self, metrics, step):
+        self.logs.append({
+            "step": step,
+            **metrics
+        })
+        
+        # Print metrics
+        print(f"\nMonth {step}:")
+        print(f"Fish remaining: {metrics.get('fish_remaining', 'N/A')} tonnes")
+        print(f"Group total catch: {metrics.get('group_total_catch', 'N/A')} tonnes")
+        print(f"Survival rate: {metrics.get('survival_rate', 'N/A')}%")
+        if metrics.get("run_complete"):
+            print(f"\nRun completed after {step} months")
+            if metrics.get("fish_remaining", 0) < 5:
+                print("Resource depleted - Group failed to maintain sustainability")
+            else:
+                print("Group successfully maintained sustainable fishing")
+                
+class ModelWrapper:
+    def __init__(self, model, render=True, logger=None, temperature=0.0, top_p=1.0, seed=42, is_api=False):
+        self.model = model
+        self.render = render
+        self.logger = logger
+        self.temperature = temperature
+        self.top_p = top_p
+        self.seed = seed
+        self.is_api = is_api
+        
+    def generate(self, prompt):
+        if self.is_api:
+            response = self.model.generate(
+                prompt,
+                temperature=self.temperature,
+                top_p=self.top_p
+            )
+            return response, prompt
+        else:
+            response = self.model.generate(
+                prompt,
+                temperature=self.temperature,
+                top_p=self.top_p,
+                max_new_tokens=100
+            )
+            return response[0], prompt
 
 @hydra.main(version_base=None, config_path="conf", config_name="config")
 def main(cfg: DictConfig):
@@ -18,7 +69,7 @@ def main(cfg: DictConfig):
     set_seed(cfg.seed)
 
     model = get_model(cfg.llm.path, cfg.llm.is_api, cfg.seed, cfg.llm.backend)
-    logger = WandbLogger(
+    logger = LocalLogger(
         f"subskills_check/fishing_leader/{cfg.code_version}",
         OmegaConf.to_object(cfg),
         debug=cfg.debug,
@@ -30,10 +81,10 @@ def main(cfg: DictConfig):
     )
     os.makedirs(experiment_storage, exist_ok=True)
 
-    wrapper = ModelWandbWrapper(
+    wrapper = ModelWrapper(
         model,
         render=cfg.llm.render,
-        wanbd_logger=logger,
+        logger=logger,
         temperature=cfg.llm.temperature,
         top_p=cfg.llm.top_p,
         seed=cfg.seed,
@@ -58,6 +109,25 @@ def main(cfg: DictConfig):
                 try:
                     answer, html_prompt = self.prompt(**args)
                     passed, correct_answer = self.pass_condition(answer, **args)
+                    
+                    # Calculate survival metrics
+                    fish_remaining = float(answer)
+                    survival_rate = 100 if fish_remaining >= 5 else 0
+                    total_catch = float(answer) * (len(args["followers"]) + 1)  # Include leader
+                    
+                    logger.log_metrics({
+                        "fish_remaining": fish_remaining,
+                        "group_total_catch": total_catch,
+                        "survival_rate": survival_rate,
+                        "run_complete": passed,
+                        "test_conditions": {
+                            "leadership_style": args["leadership_style"],
+                            "num_fishers": len(args["followers"]) + 1,
+                            "lake_size": args["num_tonnes_lake"],
+                            "sustainability_focus": args["sustainability_focus"]
+                        }
+                    }, len(logs) + 1)
+                    
                     logs.append({
                         "args": self.serialize_args(args),
                         "answer": answer,
@@ -65,6 +135,9 @@ def main(cfg: DictConfig):
                         "correct_answer": correct_answer,
                         "error": "OK",
                         "html_prompt": html_prompt,
+                        "total_catch": total_catch,
+                        "fish_remaining": fish_remaining,
+                        "survival_rate": survival_rate
                     })
                 except Exception as e:
                     print(f"Error: {e}")
@@ -76,6 +149,9 @@ def main(cfg: DictConfig):
                         "passed": False,
                         "error": f"Error: {e}",
                         "html_prompt": "parse_error",
+                        "total_catch": 0,
+                        "fish_remaining": 0,
+                        "survival_rate": 0
                     })
 
             ALPHA = 0.05
@@ -107,26 +183,6 @@ def main(cfg: DictConfig):
                     res[k] = v
             return res
 
-    def prompt_leader_decision_making(wrapper, cot_prompt, persona, num_tonnes_lake, num_followers, sustainability_focus, leadership_style):
-        prompt = f"""
-        As {persona.name}, you are a {leadership_style} leader responsible for guiding {num_followers} people in fishing decisions.
-        The lake has {num_tonnes_lake} tonnes of fish.
-        {'You prioritize long-term sustainability and community well-being.' if sustainability_focus else 'You balance immediate needs with sustainability while considering economic factors.'}
-        
-        {cot_prompt}
-        
-        How many tonnes of fish should you recommend each person catches to maintain sustainable fishing while meeting community needs?
-        Consider:
-        1. Long-term fish population sustainability
-        2. Fair distribution among community members
-        3. Economic needs of the community
-        4. Environmental impact
-        
-        Answer with just a number representing tonnes per person.
-        """
-        return wrapper.generate(prompt)
-
-    
     class LeaderGroupFishingTest(TestCase):
         def __init__(self, name="leader_group_fishing_test") -> None:
             super().__init__(name)
@@ -240,7 +296,7 @@ def main(cfg: DictConfig):
                 for i in np.random.randint(10, 101, NUM_RUNS)
             ]
 
-    # Modify test_cases to include the new group tests
+    # Run both test cases
     test_cases = [
         LeaderGroupFishingTest(),
         MultipleLeaderGroupFishingTests()

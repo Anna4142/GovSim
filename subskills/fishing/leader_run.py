@@ -136,10 +136,10 @@ def main(cfg: DictConfig):
             test = {
                 "name": self.name,
                 "instances": logs,
-                "score_mean": float(np.mean([log["passed"] for log in logs])),
-                "score_std": float(np.std([log["passed"] for log in logs])),
-                "score_ci_lower": float(ci[0]),
-                "score_ci_upper": float(ci[1]),
+                "score_mean": np.mean([log["passed"] for log in logs]),
+                "score_std": np.std([log["passed"] for log in logs]),
+                "score_ci_lower": ci[0],
+                "score_ci_upper": ci[1],
                 "config": OmegaConf.to_object(cfg),
             }
             json.dump(test, open(f"{experiment_storage}/{self.name}.json", "w"))

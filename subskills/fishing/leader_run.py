@@ -326,11 +326,11 @@ def main(cfg: DictConfig):
                 {
                     "leader": PersonaIdentity(
                         name=np.random.choice(leader_names),
-                        id=f"leader_{i}",
+                        agent_id=f"leader_{i}",
                         role="Leader"
                     ),
                     "followers": [
-                        PersonaIdentity(f"Follower{j}", f"follower_{i}_{j}", role="Follower")
+                        PersonaIdentity(name=f"Follower{j}", agent_id=f"follower_{i}_{j}", role="Follower")
                         for j in range(np.random.randint(3, 7))  # Random number of followers
                     ],
                     "num_tonnes_lake": int(i),

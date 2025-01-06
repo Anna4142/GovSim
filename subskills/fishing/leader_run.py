@@ -12,58 +12,6 @@ from pathfinder import get_model
 from simulation.utils import ModelWandbWrapper, WandbLogger
 
 
-class LocalLogger:
-    def __init__(self, name, config, debug=False):
-        self.name = name
-        self.config = config
-        self.debug = debug
-        self.logs = []
-        self.run_name = f"run_{uuid.uuid4()}"
-        
-    def log_metrics(self, metrics, step):
-        self.logs.append({
-            "step": step,
-            **metrics
-        })
-        
-        # Print metrics
-        print(f"\nMonth {step}:")
-        print(f"Fish remaining: {metrics.get('fish_remaining', 'N/A')} tonnes")
-        print(f"Group total catch: {metrics.get('group_total_catch', 'N/A')} tonnes")
-        print(f"Survival rate: {metrics.get('survival_rate', 'N/A')}%")
-        if metrics.get("run_complete"):
-            print(f"\nRun completed after {step} months")
-            if metrics.get("fish_remaining", 0) < 5:
-                print("Resource depleted - Group failed to maintain sustainability")
-            else:
-                print("Group successfully maintained sustainable fishing")
-                
-class ModelWrapper:
-    def __init__(self, model, render=True, logger=None, temperature=0.0, top_p=1.0, seed=42, is_api=False):
-        self.model = model
-        self.render = render
-        self.logger = logger
-        self.temperature = temperature
-        self.top_p = top_p
-        self.seed = seed
-        self.is_api = is_api
-        
-    def generate(self, prompt):
-        if self.is_api:
-            response = self.model.generate(
-                prompt,
-                temperature=self.temperature,
-                top_p=self.top_p
-            )
-            return response, prompt
-        else:
-            response = self.model.generate(
-                prompt,
-                temperature=self.temperature,
-                top_p=self.top_p,
-                max_new_tokens=100
-            )
-            return response[0], prompt
 
 @hydra.main(version_base=None, config_path="conf", config_name="config")
 def main(cfg: DictConfig):
@@ -136,10 +84,10 @@ def main(cfg: DictConfig):
             test = {
                 "name": self.name,
                 "instances": logs,
-                "score_mean": np.mean([log["passed"] for log in logs]),
-                "score_std": np.std([log["passed"] for log in logs]),
-                "score_ci_lower": ci[0],
-                "score_ci_upper": ci[1],
+                "score_mean":float( np.mean([log["passed"] for log in logs])),
+                "score_std": float(np.std([log["passed"] for log in logs])),
+                "score_ci_lower": float(ci[0]),
+                "score_ci_upper": float(ci[1]),
                 "config": OmegaConf.to_object(cfg),
             }
             json.dump(test, open(f"{experiment_storage}/{self.name}.json", "w"))
@@ -267,8 +215,16 @@ def main(cfg: DictConfig):
                 }
             ] * NUM_RUNS
 
-        def prompt(self, *, leader, followers, num_tonnes_lake, num_tonnes_fisher, sustainability_focus, leadership_style):
-                # First get leader's recommendation
+        def prompt(
+                self,
+                *,
+                leader,
+                followers,
+                num_tonnes_lake,
+                num_tonnes_fisher,
+                sustainability_focus,
+                leadership_style
+            ):
                 leader_recommendation, leader_html = prompt_leader_group_fishing_recommendation(
                     wrapper,
                     cot_prompt,
@@ -276,20 +232,22 @@ def main(cfg: DictConfig):
                     followers,
                     num_tonnes_lake,
                     leadership_style,
-                    sustainability_focus
+                    sustainability_focus,
+                    debug=True  # <--- turn it on
                 )
-                
-                # Then simulate group behavior
+
                 group_total, group_html = prompt_group_total_catch(
                     wrapper,
                     cot_prompt,
                     leader,
                     followers,
                     num_tonnes_lake,
-                    leader_recommendation
+                    leader_recommendation,
+                    debug=True  # <--- turn it on
                 )
-                
+
                 return group_total, leader_html + "\n" + group_html
+
         def pass_condition(self, answer, leader, followers, num_tonnes_lake, num_tonnes_fisher, sustainability_focus, leadership_style):
             # Check both individual sustainable amount and group total
             correct_group_total = max(

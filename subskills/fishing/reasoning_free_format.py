@@ -467,6 +467,7 @@ def prompt_leader_group_fishing_recommendation(
     sustainability_focus: bool,
     few_shots=0,
     description_version="v1.0",
+    debug=False,  # <--- New debug flag
 ):
     lm = model.start_chain(
         leader.name,
@@ -474,6 +475,7 @@ def prompt_leader_group_fishing_recommendation(
         "prompt_leader_group_fishing_recommendation",
     )
 
+    # Choose your system_prompt/scenario_desc as before...
     if description_version == "v1.0":
         sys_prompt = get_sytem_prompt
         scenario_desc = get_basic_dynamic_description
@@ -489,7 +491,10 @@ def prompt_leader_group_fishing_recommendation(
     else:
         raise ValueError(f"Unknown description_version: {description_version}")
 
+    # Build the user prompt
     with user():
+        # Note: 'lm += ...' sets up the text for the model; 
+        # you can also just do a local string variable. 
         lm += sys_prompt(leader)
         lm += f"""As a {leadership_style} leader, you are responsible for guiding {len(followers)} people in fishing decisions.
 The lake has {num_tons_lake} tonnes of fish.
@@ -501,25 +506,49 @@ How many tonnes of fish should you recommend each person catches to maintain sus
 
 Answer with just a number representing tonnes per person."""
 
+    # If debug, show the final prompt text that we’re about to send
+    if debug:
+        print("\n[DEBUG] LEADER RECOMMENDATION PROMPT TEXT:")
+        print(lm)
+
     with assistant():
+        # Generate the model’s output
         lm = model.gen(
             lm,
             "reasoning",
-            stop_regex=f"Answer:|So, the answer is:",
+            stop_regex=r"Answer:|So, the answer is:",
             save_stop_text=True,
         )
+
+        # If debug, show the raw output from the model before we parse it
+        if debug:
+            print("[DEBUG] RAW MODEL OUTPUT (LEADER RECOMMENDATION):")
+            print(lm)
+
+        # Parse out the numeric answer
         lm = model.find(
             lm,
-            regex=r"\d+",
+            regex=r"\d+(\.\d+)?",   # updated to allow floats
             default_value="0",
             name="option",
         )
-        option = float(lm["option"])
+        option_str = lm["option"]
+        try:
+            option = float(option_str)
+        except ValueError:
+            if debug:
+                print("[DEBUG] PARSE FAILED. Setting option to 0.0.")
+            option = 0.0
+
         reasoning = lm["reasoning"]
 
-    model.end_chain(leader.name, lm)
+    if debug:
+        print(f"[DEBUG] PARSED LEADER RECOMMENDATION: {option}")
+        print(f"[DEBUG] REASONING TEXT: {reasoning}")
 
+    model.end_chain(leader.name, lm)
     return option, lm.html()
+
 
 def prompt_group_total_catch(
     model: ModelWandbWrapper,
@@ -530,6 +559,7 @@ def prompt_group_total_catch(
     leader_recommendation: float,
     few_shots=0,
     description_version="v1.0",
+    debug=False,  # <--- debug flag
 ):
     lm = model.start_chain(
         leader.name,
@@ -537,6 +567,7 @@ def prompt_group_total_catch(
         "prompt_group_total_catch",
     )
 
+    # Same system prompt logic as above...
     if description_version == "v1.0":
         sys_prompt = get_sytem_prompt
         scenario_desc = get_basic_dynamic_description
@@ -568,22 +599,43 @@ Consider:
 
 Answer with just a number for total tonnes caught by the group."""
 
+    # If debug, show the user prompt
+    if debug:
+        print("\n[DEBUG] GROUP TOTAL CATCH PROMPT TEXT:")
+        print(lm)
+
     with assistant():
         lm = model.gen(
             lm,
             "reasoning",
-            stop_regex=f"Answer:|So, the answer is:",
+            stop_regex=r"Answer:|So, the answer is:",
             save_stop_text=True,
         )
+
+        if debug:
+            print("[DEBUG] RAW MODEL OUTPUT (GROUP TOTAL CATCH):")
+            print(lm)
+
+        # Parse the numeric answer
         lm = model.find(
             lm,
-            regex=r"\d+",
+            regex=r"\d+(\.\d+)?",
             default_value="0",
             name="option",
         )
-        option = float(lm["option"])
+        option_str = lm["option"]
+        try:
+            option = float(option_str)
+        except ValueError:
+            if debug:
+                print("[DEBUG] PARSE FAILED. Setting option to 0.0.")
+            option = 0.0
+
         reasoning = lm["reasoning"]
 
-    model.end_chain(leader.name, lm)
+    if debug:
+        print(f"[DEBUG] PARSED GROUP TOTAL: {option}")
+        print(f"[DEBUG] REASONING TEXT: {reasoning}")
 
+    model.end_chain(leader.name, lm)
     return option, lm.html()

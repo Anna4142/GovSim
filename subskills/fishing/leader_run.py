@@ -323,21 +323,24 @@ def main(cfg: DictConfig):
             leadership_styles = ["Democratic", "Authoritative", "Collaborative"]
             
             return [
-                {
+                (lambda fols: {
                     "leader": PersonaIdentity(
-                        name=np.random.choice(leader_names),
                         agent_id=f"leader_{i}",
+                        name=np.random.choice(leader_names),
                         role="Leader"
                     ),
-                    "followers": [
-                        PersonaIdentity(name=f"Follower{j}", agent_id=f"follower_{i}_{j}", role="Follower")
-                        for j in range(np.random.randint(3, 7))  # Random number of followers
-                    ],
-                    "num_tonnes_lake": int(i),
-                    "num_tonnes_fisher": len(followers) + 1,  # followers plus leader
+                    "followers": fols,
+                    "num_tonnes_lake": i,
+                    "num_tonnes_fisher": len(fols) + 1,
                     "sustainability_focus": np.random.choice([True, False]),
                     "leadership_style": np.random.choice(leadership_styles)
-                }
+                })([
+                    PersonaIdentity(
+                        agent_id=f"follower_{i}_{j}",
+                        name=f"Follower{j}",
+                        role="Follower"
+                    ) for j in range(np.random.randint(3, 7))
+                ])
                 for i in np.random.randint(10, 101, NUM_RUNS)
             ]
 

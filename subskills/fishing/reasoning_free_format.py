@@ -467,7 +467,7 @@ def prompt_leader_group_fishing_recommendation(
     sustainability_focus: bool,
     few_shots=0,
     description_version="v1.0",
-    debug=False,  # <--- New debug flag
+    debug=True,  # <--- New debug flag
 ):
     lm = model.start_chain(
         leader.name,
@@ -559,7 +559,7 @@ def prompt_group_total_catch(
     leader_recommendation: float,
     few_shots=0,
     description_version="v1.0",
-    debug=False,  # <--- debug flag
+    debug=True,  # <--- debug flag
 ):
     lm = model.start_chain(
         leader.name,

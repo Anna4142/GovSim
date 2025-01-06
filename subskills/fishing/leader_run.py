@@ -90,6 +90,9 @@ def main(cfg: DictConfig):
                 "score_ci_upper": float(ci[1]),
                 "config": OmegaConf.to_object(cfg),
             }
+            print("\n[DEBUG] About to dump the following dictionary to JSON:")
+            print(test)  # Or pprint(test) if you prefer nicely formatted output
+
             json.dump(test, open(f"{experiment_storage}/{self.name}.json", "w"))
 
         def run(self):

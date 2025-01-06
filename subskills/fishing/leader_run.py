@@ -129,10 +129,20 @@ def main(cfg: DictConfig):
         NUM_RUNS = 2
 
     class TestCase:
-        name: str
-
-        def __init__(self, name) -> None:
+        def __init__(self, name):
             self.name = name
+
+        def run_test(self, logs, ci, cfg, experiment_storage):
+            test = {
+                "name": self.name,
+                "instances": logs,
+                "score_mean": float(np.mean([log["passed"] for log in logs])),
+                "score_std": float(np.std([log["passed"] for log in logs])),
+                "score_ci_lower": float(ci[0]),
+                "score_ci_upper": float(ci[1]),
+                "config": OmegaConf.to_object(cfg),
+            }
+            json.dump(test, open(f"{experiment_storage}/{self.name}.json", "w"))
 
         def run(self):
             logs = []
@@ -190,16 +200,8 @@ def main(cfg: DictConfig):
                 sum([log["passed"] for log in logs]), len(logs), alpha=ALPHA
             )
 
-            test = {
-                "name": self.name,
-                "instances": logs,
-                "score_mean": np.mean([log["passed"] for log in logs]),
-                "score_std": np.std([log["passed"] for log in logs]),
-                "score_ci_lower": ci[0],
-                "score_ci_upper": ci[1],
-                "config": OmegaConf.to_object(cfg),
-            }
-            json.dump(test, open(f"{experiment_storage}/{self.name}.json", "w"))
+            self.run_test(logs, ci, cfg, experiment_storage)
+
         def get_args_iterator(self):
             raise NotImplementedError
 

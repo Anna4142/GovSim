@@ -467,15 +467,16 @@ def prompt_leader_group_fishing_recommendation(
     sustainability_focus: bool,
     few_shots=0,
     description_version="v1.0",
-    debug=True,  # <--- New debug flag
+    debug=True,  # Debug flag enabled
 ):
+    # Initialize the interaction chain
     lm = model.start_chain(
         leader.name,
         "fishing_leadership_act",
         "prompt_leader_group_fishing_recommendation",
     )
 
-    # Choose your system_prompt/scenario_desc as before...
+    # Select the appropriate system prompt and scenario description
     if description_version == "v1.0":
         sys_prompt = get_sytem_prompt
         scenario_desc = get_basic_dynamic_description
@@ -491,10 +492,10 @@ def prompt_leader_group_fishing_recommendation(
     else:
         raise ValueError(f"Unknown description_version: {description_version}")
 
-    # Build the user prompt
+    persona_name = leader.name
+
     with user():
-        # Note: 'lm += ...' sets up the text for the model; 
-        # you can also just do a local string variable. 
+        # Construct the prompt with clear instructions
         lm += sys_prompt(leader)
         lm += f"""As a {leadership_style} leader, you are responsible for guiding {len(followers)} people in fishing decisions.
 The lake has {num_tons_lake} tonnes of fish.
@@ -504,15 +505,15 @@ The lake has {num_tons_lake} tonnes of fish.
 
 How many tonnes of fish should you recommend each person catches to maintain sustainable fishing while meeting community needs?
 
-Answer with just a number representing tonnes per person."""
+Answer:"""
 
-    # If debug, show the final prompt text that we’re about to send
+    # Debug: Print the constructed prompt
     if debug:
         print("\n[DEBUG] LEADER RECOMMENDATION PROMPT TEXT:")
         print(lm)
 
     with assistant():
-        # Generate the model’s output
+        # Generate the model’s response
         lm = model.gen(
             lm,
             "reasoning",
@@ -520,19 +521,20 @@ Answer with just a number representing tonnes per person."""
             save_stop_text=True,
         )
 
-        # If debug, show the raw output from the model before we parse it
+        # Debug: Print the raw model output
         if debug:
             print("[DEBUG] RAW MODEL OUTPUT (LEADER RECOMMENDATION):")
             print(lm)
 
-        # Parse out the numeric answer
+        # Extract the numeric answer using a robust regex pattern
         lm = model.find(
             lm,
-            regex=r"\d+(\.\d+)?",   # updated to allow floats
+            regex=r"\d+(\.\d+)?",   # Allows for integers and floats
             default_value="0",
             name="option",
         )
-        option_str = lm["option"]
+
+        option_str = lm.get("option", "0")
         try:
             option = float(option_str)
         except ValueError:
@@ -540,16 +542,16 @@ Answer with just a number representing tonnes per person."""
                 print("[DEBUG] PARSE FAILED. Setting option to 0.0.")
             option = 0.0
 
-        reasoning = lm["reasoning"]
+        reasoning = lm.get("reasoning", "")
 
+    # Debug: Print the parsed answer and reasoning
     if debug:
         print(f"[DEBUG] PARSED LEADER RECOMMENDATION: {option}")
         print(f"[DEBUG] REASONING TEXT: {reasoning}")
 
+    # End the interaction chain
     model.end_chain(leader.name, lm)
     return option, lm.html()
-
-
 def prompt_group_total_catch(
     model: ModelWandbWrapper,
     cot_prompt: str,
@@ -559,15 +561,16 @@ def prompt_group_total_catch(
     leader_recommendation: float,
     few_shots=0,
     description_version="v1.0",
-    debug=True,  # <--- debug flag
+    debug=True,  # Debug flag enabled
 ):
+    # Initialize the interaction chain
     lm = model.start_chain(
         leader.name,
         "fishing_group_act",
         "prompt_group_total_catch",
     )
 
-    # Same system prompt logic as above...
+    # Select the appropriate system prompt and scenario description
     if description_version == "v1.0":
         sys_prompt = get_sytem_prompt
         scenario_desc = get_basic_dynamic_description
@@ -584,6 +587,7 @@ def prompt_group_total_catch(
         raise ValueError(f"Unknown description_version: {description_version}")
 
     with user():
+        # Construct the prompt with clear instructions
         lm += sys_prompt(leader)
         lm += f"""The lake has {num_tons_lake} tonnes of fish.
 There are {len(followers) + 1} fishers including the leader.
@@ -597,14 +601,15 @@ Consider:
 2. Group dynamics
 3. Individual needs
 
-Answer with just a number for total tonnes caught by the group."""
+Answer:"""
 
-    # If debug, show the user prompt
+    # Debug: Print the constructed prompt
     if debug:
         print("\n[DEBUG] GROUP TOTAL CATCH PROMPT TEXT:")
         print(lm)
 
     with assistant():
+        # Generate the model’s response
         lm = model.gen(
             lm,
             "reasoning",
@@ -612,18 +617,20 @@ Answer with just a number for total tonnes caught by the group."""
             save_stop_text=True,
         )
 
+        # Debug: Print the raw model output
         if debug:
             print("[DEBUG] RAW MODEL OUTPUT (GROUP TOTAL CATCH):")
             print(lm)
 
-        # Parse the numeric answer
+        # Extract the numeric answer using a robust regex pattern
         lm = model.find(
             lm,
-            regex=r"\d+(\.\d+)?",
+            regex=r"\d+(\.\d+)?",   # Allows for integers and floats
             default_value="0",
             name="option",
         )
-        option_str = lm["option"]
+
+        option_str = lm.get("option", "0")
         try:
             option = float(option_str)
         except ValueError:
@@ -631,11 +638,13 @@ Answer with just a number for total tonnes caught by the group."""
                 print("[DEBUG] PARSE FAILED. Setting option to 0.0.")
             option = 0.0
 
-        reasoning = lm["reasoning"]
+        reasoning = lm.get("reasoning", "")
 
+    # Debug: Print the parsed answer and reasoning
     if debug:
-        print(f"[DEBUG] PARSED GROUP TOTAL: {option}")
+        print(f"[DEBUG] PARSED GROUP TOTAL CATCH: {option}")
         print(f"[DEBUG] REASONING TEXT: {reasoning}")
 
+    # End the interaction chain
     model.end_chain(leader.name, lm)
     return option, lm.html()

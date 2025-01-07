@@ -648,3 +648,63 @@ Answer:"""
     # End the interaction chain
     model.end_chain(leader.name, lm)
     return option, lm.html()
+def prompt_leader_decision(
+    model: ModelWandbWrapper,
+    cot_prompt: str,
+    leader: PersonaIdentity,
+    num_tons_lake: int,
+    followers: list[PersonaIdentity],
+    few_shots=0,
+    description_version="v1.0",
+):
+    lm = model.start_chain(
+        leader.name,
+        "fishing_leadership_act",
+        "prompt_leader_decision",
+    )
+
+    if description_version == "v1.0":
+        sys_prompt = get_sytem_prompt
+        scenario_desc = get_basic_dynamic_description
+    elif description_version == "v2.0":
+        sys_prompt = get_sytem_prompt_v2
+        scenario_desc = get_basic_dynamic_description_v2
+    elif description_version == "v3.0":
+        sys_prompt = get_sytem_prompt_v3
+        scenario_desc = get_basic_dynamic_description_v3
+    elif description_version == "v4.0":
+        sys_prompt = get_sytem_prompt_v4
+        scenario_desc = get_basic_dynamic_description_v4
+    else:
+        raise ValueError(f"Unknown description_version: {description_version}")
+
+    with user():
+        lm += sys_prompt(leader)
+        lm += f"""As the leader {leader.name}, you are responsible for making fishing decisions that will influence {len(followers)} followers: {', '.join([f.name for f in followers])}.
+The lake has {num_tons_lake} tonnes of fish.
+The fish population doubles each season, but only if at least half remains.
+Each fisher needs to catch at least 5 tonnes to sustain their community.
+
+{cot_prompt}
+
+Task: With a fishing range set between 0-{num_tons_lake}, how many tons of fish will you catch to set an example for your followers?
+Put the final answer after "Answer:"."""
+
+    with assistant():
+        lm = model.gen(
+            lm,
+            "reasoning",
+            stop_regex=r"Answer:|So, the answer is:",
+            save_stop_text=True,
+        )
+        lm = model.find(
+            lm,
+            regex=r"\d+",
+            default_value="0",
+            name="option",
+        )
+        option = int(lm["option"])
+        reasoning = lm["reasoning"]
+
+    model.end_chain(leader.name, lm)
+    return option, lm.html()

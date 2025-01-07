@@ -59,6 +59,7 @@ def main(cfg: DictConfig):
 
         def __init__(self, name) -> None:
             self.name = name
+            self.experiment_storage = experiment_storage
 
         def run(self):
             logs = []
@@ -88,27 +89,37 @@ def main(cfg: DictConfig):
                     })
                 except Exception as e:
                     print(f"Error: {e}")
+                    num_followers = len(args["followers"])
                     logs.append({
                         "args": self.serialize_args(args),
                         "leader_catch": None,
                         "leader_passed": False,
                         "leader_correct": 0,
-                        "follower_catches": None,
-                        "follower_passed": [False] * len(args["followers"]),
-                        "follower_correct": [0] * len(args["followers"]),
+                        "follower_catches": [0] * num_followers,
+                        "follower_passed": [False] * num_followers,
+                        "follower_correct": [0] * num_followers,
                         "error": f"Error: {e}",
                         "html_prompt": "parse_error",
                     })
 
             ALPHA = 0.05
-            leader_pass_rate = np.mean([log["leader_passed"] for log in logs])
+            # Only process logs that have valid data
+            valid_logs = [log for log in logs if log["leader_catch"] is not None and log["follower_catches"] is not None]
+            
+            if not valid_logs:
+                print("No valid logs found!")
+                return
+                
+            leader_pass_rate = np.mean([log["leader_passed"] for log in valid_logs])
             follower_pass_rates = [
-                np.mean([log["follower_passed"][i] for log in logs])
-                for i in range(len(logs[0]["follower_passed"]))
+                np.mean([log["follower_passed"][i] for log in valid_logs])
+                for i in range(len(valid_logs[0]["follower_catches"]))
             ]
 
             ci = smprop.proportion_confint(
-                sum([log["leader_passed"] for log in logs]), len(logs), alpha=ALPHA
+                sum([log["leader_passed"] for log in valid_logs]), 
+                len(valid_logs), 
+                alpha=ALPHA
             )
 
             test = {
@@ -118,13 +129,13 @@ def main(cfg: DictConfig):
                 "follower_score_means": follower_pass_rates,
                 "score_ci_lower": ci[0],
                 "score_ci_upper": ci[1],
-                "avg_leader_catch": np.mean([log["leader_catch"] for log in logs if log["leader_catch"] is not None]),
+                "avg_leader_catch": np.mean([log["leader_catch"] for log in valid_logs]),
                 "avg_follower_catches": [
-                    np.mean([log["follower_catches"][i] for log in logs if log["follower_catches"] is not None])
-                    for i in range(len(logs[0]["follower_catches"]))
+                    np.mean([log["follower_catches"][i] for log in valid_logs])
+                    for i in range(len(valid_logs[0]["follower_catches"]))
                 ],
             }
-            json.dump(test, open(f"{experiment_storage}/{self.name}.json", "w"))
+            json.dump(test, open(f"{self.experiment_storage}/{self.name}.json", "w"))
             
         def serialize_args(self, args: dict[str, any]):
             res = {}
@@ -150,13 +161,12 @@ def main(cfg: DictConfig):
         def get_args_iterator(self):
             return [
                 {
-                    "leader": PersonaIdentity("Leader", "Leader"),
+                    "leader": PersonaIdentity("Emma", "Emma"),
                     "num_tons_lake": 100,
                     "followers": [
                         PersonaIdentity("John", "John"),
                         PersonaIdentity("Kate", "Kate"),
                         PersonaIdentity("Jack", "Jack"),
-                        PersonaIdentity("Emma", "Emma")
                     ]
                 }
             ] * NUM_RUNS

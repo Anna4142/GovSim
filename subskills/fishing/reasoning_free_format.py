@@ -708,3 +708,66 @@ Put the final answer after "Answer:"."""
 
     model.end_chain(leader.name, lm)
     return option, lm.html()
+def prompt_follower_decision(
+    wrapper,
+    cot_prompt: str,
+    follower: PersonaIdentity,
+    leader: PersonaIdentity,
+    leader_catch: int,
+    num_tons_lake: int,
+    few_shots=0,
+    description_version="v1.0",
+):
+    lm = wrapper.start_chain(
+        follower.name,
+        "fishing_cognition_act",
+        "prompt_follower_decision",
+    )
+
+    if description_version == "v1.0":
+        sys_prompt = get_sytem_prompt
+        scenario_desc = get_basic_dynamic_description
+    elif description_version == "v2.0":
+        sys_prompt = get_sytem_prompt_v2
+        scenario_desc = get_basic_dynamic_description_v2
+    elif description_version == "v3.0":
+        sys_prompt = get_sytem_prompt_v3
+        scenario_desc = get_basic_dynamic_description_v3
+    elif description_version == "v4.0":
+        sys_prompt = get_sytem_prompt_v4
+        scenario_desc = get_basic_dynamic_description_v4
+    else:
+        raise ValueError(f"Unknown description_version: {description_version}")
+
+    with user():
+        lm += sys_prompt(follower)
+        lm += f"""The lake has {num_tons_lake} tonnes of fish.
+The fish population doubles each season, but only if at least half remains.
+Each fisher needs to catch at least 5 tonnes to sustain their community.
+
+Your leader {leader.name} has decided to catch {leader_catch} tonnes of fish and expects the group to follow their example for sustainable fishing.
+
+{cot_prompt}
+
+Task: With a fishing range set between 0-{num_tons_lake}, how many tons of fish will you catch?
+Consider that your leader has set an example with {leader_catch} tonnes.
+Put the final answer after "Answer:"."""
+
+    with assistant():
+        lm = wrapper.gen(
+            lm,
+            "reasoning",
+            stop_regex=r"Answer:|So, the answer is:",
+            save_stop_text=True,
+        )
+        lm = wrapper.find(
+            lm,
+            regex=r"\d+",
+            default_value="0",
+            name="option",
+        )
+        option = int(lm["option"])
+        reasoning = lm["reasoning"]
+
+    wrapper.end_chain(follower.name, lm)
+    return option, lm.html()

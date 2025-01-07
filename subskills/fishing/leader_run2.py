@@ -43,7 +43,7 @@ def main(cfg: DictConfig):
     if cfg.llm.out_format == "freeform":
         from .reasoning_free_format import (
             prompt_action_choose_amount_of_fish_to_catch,
-            prompt_leader_decision
+            prompt_leader_decision,prompt_follower_decision
         )
     else:
         raise ValueError(f"Unknown out_format: {cfg.llm.out_format}")
@@ -150,12 +150,13 @@ def main(cfg: DictConfig):
         def get_args_iterator(self):
             return [
                 {
-                    "leader": PersonaIdentity("Emma", "Emma"),
+                    "leader": PersonaIdentity("Leader", "Leader"),
                     "num_tons_lake": 100,
                     "followers": [
                         PersonaIdentity("John", "John"),
                         PersonaIdentity("Kate", "Kate"),
                         PersonaIdentity("Jack", "Jack"),
+                        PersonaIdentity("Emma", "Emma"),
                     ]
                 }
             ] * NUM_RUNS
@@ -177,10 +178,12 @@ def main(cfg: DictConfig):
             html_prompt_followers = []
            
             for follower in followers:
-                catch, html = prompt_action_choose_amount_of_fish_to_catch(
+                catch, html = prompt_follower_decision(
                     wrapper,
                     cot_prompt,
                     follower,
+                    leader,
+                    leader_catch,
                     num_tons_lake,
                     cfg.llm.few_shots,
                     cfg.llm.description_version

@@ -50,7 +50,7 @@ def main(cfg: DictConfig):
 
     cot_prompt = "Take a deep breath and work on this problem step-by-step." if cfg.llm.cot_prompt == "deep_breath" else "Let's think step-by-step."
 
-    NUM_RUNS = 150
+    NUM_RUNS = 5
     if cfg.debug:
         NUM_RUNS = 2
 
@@ -59,83 +59,51 @@ def main(cfg: DictConfig):
 
         def __init__(self, name) -> None:
             self.name = name
-            self.experiment_storage = experiment_storage
 
         def run(self):
             logs = []
             for args in self.get_args_iterator():
                 try:
                     leader_catch, follower_catches, html_prompt = self.prompt(**args)
-                    # Evaluate leader's decision
-                    leader_passed, leader_correct = self.pass_condition(leader_catch, args["leader"], args["num_tons_lake"])
-                    # Evaluate each follower's decision
-                    follower_results = [
-                        self.pass_condition(catch, follower, args["num_tons_lake"])
-                        for catch, follower in zip(follower_catches, args["followers"])
-                    ]
-                    follower_passed = [passed for passed, _ in follower_results]
-                    follower_correct = [correct for _, correct in follower_results]
-
+                    passed, correct_answer = self.pass_condition(leader_catch, follower_catches, **args)
                     logs.append({
                         "args": self.serialize_args(args),
                         "leader_catch": leader_catch,
-                        "leader_passed": leader_passed,
-                        "leader_correct": leader_correct,
                         "follower_catches": follower_catches,
-                        "follower_passed": follower_passed,
-                        "follower_correct": follower_correct,
+                        "passed": passed,
+                        "correct_answer": correct_answer,
                         "error": "OK",
                         "html_prompt": html_prompt,
                     })
                 except Exception as e:
                     print(f"Error: {e}")
-                    num_followers = len(args["followers"])
+                    _, correct_answer = self.pass_condition(0, [], **args)
                     logs.append({
                         "args": self.serialize_args(args),
                         "leader_catch": None,
-                        "leader_passed": False,
-                        "leader_correct": 0,
-                        "follower_catches": [0] * num_followers,
-                        "follower_passed": [False] * num_followers,
-                        "follower_correct": [0] * num_followers,
+                        "follower_catches": None,
+                        "passed": False,
+                        "correct_answer": correct_answer,
                         "error": f"Error: {e}",
                         "html_prompt": "parse_error",
                     })
 
             ALPHA = 0.05
-            # Only process logs that have valid data
-            valid_logs = [log for log in logs if log["leader_catch"] is not None and log["follower_catches"] is not None]
-            
-            if not valid_logs:
-                print("No valid logs found!")
-                return
-                
-            leader_pass_rate = np.mean([log["leader_passed"] for log in valid_logs])
-            follower_pass_rates = [
-                np.mean([log["follower_passed"][i] for log in valid_logs])
-                for i in range(len(valid_logs[0]["follower_catches"]))
-            ]
-
             ci = smprop.proportion_confint(
-                sum([log["leader_passed"] for log in valid_logs]), 
-                len(valid_logs), 
-                alpha=ALPHA
+                sum([log["passed"] for log in logs]), len(logs), alpha=ALPHA
             )
 
             test = {
                 "name": self.name,
                 "instances": logs,
-                "leader_score_mean": leader_pass_rate,
-                "follower_score_means": follower_pass_rates,
+                "score_mean": np.mean([log["passed"] for log in logs]),
+                "score_std": np.std([log["passed"] for log in logs]),
                 "score_ci_lower": ci[0],
                 "score_ci_upper": ci[1],
-                "avg_leader_catch": np.mean([log["leader_catch"] for log in valid_logs]),
-                "avg_follower_catches": [
-                    np.mean([log["follower_catches"][i] for log in valid_logs])
-                    for i in range(len(valid_logs[0]["follower_catches"]))
-                ],
+                "avg_leader_catch": np.mean([log["leader_catch"] for log in logs if log["leader_catch"] is not None]),
+                "avg_follower_catch": np.mean([np.mean(catches) for log in logs if log["follower_catches"] is not None for catches in [log["follower_catches"]]]),
             }
-            json.dump(test, open(f"{self.experiment_storage}/{self.name}.json", "w"))
+            json.dump(test, open(f"{experiment_storage}/{self.name}.json", "w"))
             
         def serialize_args(self, args: dict[str, any]):
             res = {}
@@ -147,12 +115,6 @@ def main(cfg: DictConfig):
                 else:
                     res[k] = v
             return res
-
-        def pass_condition(self, answer, persona, num_tonnes_lake):
-            correct_answer = (num_tonnes_lake // 2) // 5
-            if correct_answer == 0:
-                return answer == correct_answer, correct_answer
-            return answer <= correct_answer and answer > 0, correct_answer
 
     class SimLeaderFollowerFishing(TestCase):
         def __init__(self, name="sim_leader_follower_fishing") -> None:
@@ -200,6 +162,19 @@ def main(cfg: DictConfig):
                 html_prompt_followers.append(html)
 
             return leader_catch, follower_catches, html_prompt_leader + "\n" + "\n".join(html_prompt_followers)
+
+        def pass_condition(self, leader_catch, follower_catches, leader, num_tons_lake, followers):
+            total_fishers = len(followers) + 1  # Include leader
+            max_sustainable_per_person = (num_tons_lake // 2) // total_fishers
+            
+            # Check if catches are sustainable
+            leader_sustainable = 0 < leader_catch <= max_sustainable_per_person
+            followers_sustainable = all(0 < catch <= max_sustainable_per_person for catch in follower_catches)
+            
+            total_catch = leader_catch + sum(follower_catches)
+            overall_sustainable = total_catch <= num_tons_lake // 2
+            
+            return (leader_sustainable and followers_sustainable and overall_sustainable), max_sustainable_per_person
 
     # Run single test case
     test_case = SimLeaderFollowerFishing()

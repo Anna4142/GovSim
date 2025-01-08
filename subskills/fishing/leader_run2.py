@@ -50,7 +50,7 @@ def main(cfg: DictConfig):
 
     cot_prompt = "Take a deep breath and work on this problem step-by-step." if cfg.llm.cot_prompt == "deep_breath" else "Let's think step-by-step."
 
-    NUM_RUNS = 5
+    NUM_RUNS = 50
     if cfg.debug:
         NUM_RUNS = 2
 

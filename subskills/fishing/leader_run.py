@@ -76,7 +76,7 @@ def main(cfg: DictConfig):
 
     # You can adjust how many runs you want for the "other" tests.
     # But for the new 1-leader tests, we fix them to 5 inside the class.
-    NUM_RUNS = 150
+    NUM_RUNS = 5
     if cfg.debug:
         NUM_RUNS = 2
 

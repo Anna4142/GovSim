@@ -119,12 +119,13 @@ def main(cfg: DictConfig):
     class SimLeaderFollowerFishing(TestCase):
         def __init__(self, name="sim_leader_follower_fishing") -> None:
             super().__init__(name)
+            self.current_lake_tons = 100 
 
         def get_args_iterator(self):
             return [
                 {
                     "leader": PersonaIdentity("Emma", "Emma"),
-                    "num_tons_lake": 100,
+                    "num_tons_lake": self.current_lake_tons,
                     "followers": [
                         PersonaIdentity("John", "John"),
                         PersonaIdentity("Kate", "Kate"),
@@ -160,6 +161,11 @@ def main(cfg: DictConfig):
                 )
                 follower_catches.append(catch)
                 html_prompt_followers.append(html)
+            # Calculate new lake population based on catches
+            total_catch = leader_catch + sum(follower_catches)
+            remaining_fish = num_tons_lake - total_catch
+            self.current_lake_tons = min(remaining_fish * 2, 100)  # Double but cap at carrying capacity
+
 
             return leader_catch, follower_catches, html_prompt_leader + "\n" + "\n".join(html_prompt_followers)
 

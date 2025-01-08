@@ -1,16 +1,36 @@
 import json
 import os
+import shutil
 import uuid
+
+import hydra
 import numpy as np
 import statsmodels.stats.proportion as smprop
 import tqdm
+from hydra import compose, initialize
+from hydra.core.global_hydra import GlobalHydra
 from omegaconf import DictConfig, OmegaConf
 from transformers import set_seed
-import hydra
-from simulation.persona.common import PersonaIdentity
-from pathfinder import get_model
-from simulation.utils import ModelWandbWrapper, WandbLogger
 
+import wandb
+from simulation.persona.common import PersonaIdentity
+from simulation.utils import ModelWandbWrapper, WandbLogger
+from pathfinder import get_model
+
+# -------------------------------------------------------------------
+# Existing "reasoning_free_format" imports (these must exist in your codebase)
+# -------------------------------------------------------------------
+from .reasoning_free_format import (
+    prompt_action_choose_amount_of_fish_to_catch,
+    prompt_action_choose_amount_of_fish_to_catch_universalization,
+    prompt_reflection_if_all_fisher_that_same_quantity,
+    prompt_shrinking_limit,
+    prompt_shrinking_limit_asumption,
+    prompt_simple_reflection_if_all_fisher_that_same_quantity,
+    prompt_simple_shrinking_limit,
+    prompt_simple_shrinking_limit_assumption,
+    prompt_leader_decision,  # <-- make sure you have this in reasoning_free_format
+)
 
 
 @hydra.main(version_base=None, config_path="conf", config_name="config")
@@ -19,22 +39,15 @@ def main(cfg: DictConfig):
     set_seed(cfg.seed)
 
     model = get_model(cfg.llm.path, cfg.llm.is_api, cfg.seed, cfg.llm.backend)
-    '''''
-    logger = LocalLogger(
-        f"subskills_check/fishing_leader/{cfg.code_version}",
+    logger = WandbLogger(
+        f"subskills_check/fishing/{cfg.code_version}",
         OmegaConf.to_object(cfg),
         debug=cfg.debug,
-    )
-    '''
-    logger = WandbLogger(
-    f"subskills_check/fishing_leader1/{cfg.code_version}",
-    OmegaConf.to_object(cfg),
-    debug=cfg.debug,
     )
 
     experiment_storage = os.path.join(
         os.path.dirname(__file__),
-        f"./results/subskills_check_leader1_{cfg.code_version}/{logger.run_name}",
+        f"./results/subskills_check_{cfg.code_version}/{logger.run_name}",
     )
     os.makedirs(experiment_storage, exist_ok=True)
 
@@ -47,23 +60,12 @@ def main(cfg: DictConfig):
         seed=cfg.seed,
         is_api=cfg.llm.is_api,
     )
-    if cfg.llm.out_format == "freeform":
-        from .reasoning_free_format import (
-            prompt_action_choose_amount_of_fish_to_catch,
-            prompt_action_choose_amount_of_fish_to_catch_universalization,
-            prompt_reflection_if_all_fisher_that_same_quantity,
-            prompt_shrinking_limit,
-            prompt_shrinking_limit_asumption,
-            prompt_simple_reflection_if_all_fisher_that_same_quantity,
-            prompt_simple_shrinking_limit,
-            prompt_simple_shrinking_limit_assumption,
-            prompt_leader_group_fishing_recommendation,
-            prompt_group_total_catch,
-        )
-    else:
-        # We found freefrom makes more sense, since we don't destory the model's output probability distribqution
-        raise ValueError(f"Unknown out_format: {cfg.llm.out_format}")
 
+    if cfg.llm.out_format == "freeform":
+        # Already imported above
+        pass
+    else:
+        raise ValueError(f"Unknown out_format: {cfg.llm.out_format}")
 
     if cfg.llm.cot_prompt == "deep_breath":
         cot_prompt = "Take a deep breath and work on this problem step-by-step."
@@ -72,250 +74,667 @@ def main(cfg: DictConfig):
     else:
         raise ValueError(f"Unknown cot_prompt: {cfg.llm.cot_prompt}")
 
+    # You can adjust how many runs you want for the "other" tests.
+    # But for the new 1-leader tests, we fix them to 5 inside the class.
     NUM_RUNS = 150
     if cfg.debug:
         NUM_RUNS = 2
 
+    # -------------------------------------------------------------------
+    # Base TestCase class
+    # -------------------------------------------------------------------
     class TestCase:
-        def __init__(self, name):
+        name: str
+
+        def __init__(self, name) -> None:
             self.name = name
-
-        def run_test(self, logs, ci, cfg, experiment_storage):
-            test = {
-                "name": self.name,
-                "instances": logs,
-                "score_mean":float( np.mean([log["passed"] for log in logs])),
-                "score_std": float(np.std([log["passed"] for log in logs])),
-                "score_ci_lower": float(ci[0]),
-                "score_ci_upper": float(ci[1]),
-                "config": OmegaConf.to_object(cfg),
-            }
-            print("\n[DEBUG] About to dump the following dictionary to JSON:")
-            print(test)  # Or pprint(test) if you prefer nicely formatted output
-
-            json.dump(test, open(f"{experiment_storage}/{self.name}.json", "w"))
 
         def run(self):
             logs = []
             for args in self.get_args_iterator():
                 try:
+                    # "prompt" method returns (answer, html_prompt)
                     answer, html_prompt = self.prompt(**args)
                     passed, correct_answer = self.pass_condition(answer, **args)
-                    
-                    # Calculate survival metrics
-                    fish_remaining = float(answer)
-                    survival_rate = 100 if fish_remaining >= 5 else 0
-                    total_catch = float(answer) * (len(args["followers"]) + 1)  # Include leader
-                    
-                    logger.log_metrics({
-                        "fish_remaining": fish_remaining,
-                        "group_total_catch": total_catch,
-                        "survival_rate": survival_rate,
-                        "run_complete": passed,
-                        "test_conditions": {
-                            "leadership_style": args["leadership_style"],
-                            "num_fishers": len(args["followers"]) + 1,
-                            "lake_size": args["num_tonnes_lake"],
-                            "sustainability_focus": args["sustainability_focus"]
+                    logs.append(
+                        {
+                            "args": self.serialize_args(args),
+                            "answer": answer,
+                            "passed": passed,
+                            "correct_answer": correct_answer,
+                            "error": "OK",
+                            "html_prompt": html_prompt,
                         }
-                    }, len(logs) + 1)
-                    
-                    logs.append({
-                        "args": self.serialize_args(args),
-                        "answer": answer,
-                        "passed": passed,
-                        "correct_answer": correct_answer,
-                        "error": "OK",
-                        "html_prompt": html_prompt,
-                        "total_catch": total_catch,
-                        "fish_remaining": fish_remaining,
-                        "survival_rate": survival_rate
-                    })
+                    )
                 except Exception as e:
                     print(f"Error: {e}")
+                    # Attempt a "correct_answer" from pass_condition
                     _, correct_answer = self.pass_condition(0, **args)
-                    logs.append({
-                        "args": self.serialize_args(args),
-                        "answer": None,
-                        "correct_answer": correct_answer,
-                        "passed": False,
-                        "error": f"Error: {e}",
-                        "html_prompt": "parse_error",
-                        "total_catch": 0,
-                        "fish_remaining": 0,
-                        "survival_rate": 0
-                    })
+                    logs.append(
+                        {
+                            "args": self.serialize_args(args),
+                            "answer": None,
+                            "correct_answer": correct_answer,
+                            "passed": False,
+                            "error": f"Error: {e}",
+                            "html_prompt": "parse_error",
+                        }
+                    )
 
             ALPHA = 0.05
             ci = smprop.proportion_confint(
                 sum([log["passed"] for log in logs]), len(logs), alpha=ALPHA
             )
 
-            self.run_test(logs, ci, cfg, experiment_storage)
+            test = {
+                "name": self.name,
+                "instances": logs,
+                "score_mean": np.mean([log["passed"] for log in logs]),
+                "score_std": np.std([log["passed"] for log in logs]),
+                "score_ci_lower": ci[0],
+                "score_ci_upper": ci[1],
+                "config": OmegaConf.to_object(cfg),
+            }
+            # Save JSON
+            outpath = os.path.join(experiment_storage, f"{self.name}.json")
+            with open(outpath, "w") as f:
+                json.dump(test, f)
 
         def get_args_iterator(self):
             raise NotImplementedError
 
-        def prompt(self, *, args):
+        def prompt(self, **kwargs):
             raise NotImplementedError
-        def serialize_args(self, args: dict[str, any]):
-                    res = {}
-                    for k, v in args.items():
-                        if isinstance(v, PersonaIdentity):
-                            res[k] = {
-                                'agent_id': v.agent_id,
-                                'name': v.name,
-                                'role': v.role,
-                                'age': v.age,
-                                'innate_traits': v.innate_traits,
-                                'background': v.background,
-                                'goals': v.goals,
-                                'behavior': v.behavior,
-                                'customs': v.customs
-                            }
-                        elif isinstance(v, list):
-                            # Handle lists of PersonaIdentity objects
-                            res[k] = [
-                                {
-                                    'agent_id': item.agent_id,
-                                    'name': item.name,
-                                    'role': item.role,
-                                    'age': item.age,
-                                    'innate_traits': item.innate_traits,
-                                    'background': item.background,
-                                    'goals': item.goals,
-                                    'behavior': item.behavior,
-                                    'customs': item.customs
-                                } if isinstance(item, PersonaIdentity) else item 
-                                for item in v
-                            ]
-                        else:
-                            res[k] = v
-                    return res
 
-    class LeaderGroupFishingTest(TestCase):
-        def __init__(self, name="leader_group_fishing_test") -> None:
+        def pass_condition(self, answer, **kwargs):
+            raise NotImplementedError
+
+        def serialize_args(self, args: dict):
+            """Helper to JSON-serialize PersonaIdentity, etc."""
+            res = {}
+            for k, v in args.items():
+                if isinstance(v, PersonaIdentity):
+                    res[k] = v.agent_id
+                elif isinstance(v, list) and all(
+                    isinstance(f, PersonaIdentity) for f in v
+                ):
+                    res[k] = [f.agent_id for f in v]
+                else:
+                    res[k] = v
+            return res
+
+    # -------------------------------------------------------------------
+    # Existing test classes from your snippet
+    # -------------------------------------------------------------------
+    class MathConsequenceAfterFishingSameAmount(TestCase):
+        def __init__(self, name="math_consequence_after_fishing_same_amount") -> None:
             super().__init__(name)
 
         def get_args_iterator(self):
-            leadership_styles = ["Democratic", "Authoritative", "Collaborative"]
-            follower_names = ["Follower1", "Follower2", "Follower3", "Follower4", "Follower5"]
             return [
                 {
-                    "leader": PersonaIdentity(
-                        "John", 
-                        "leader_1", 
-                        role="Leader"
-                    ),
-                    "followers": [
-                        PersonaIdentity(name, f"follower_{i}", role="Follower")
-                        for i, name in enumerate(follower_names)
-                    ],
+                    "persona": PersonaIdentity("John", "John"),
                     "num_tonnes_lake": 100,
-                    "num_tonnes_fisher": 6,  # 1 leader + 5 followers
-                    "sustainability_focus": True,
-                    "leadership_style": np.random.choice(leadership_styles)
+                    "num_tonnes_fisher": 10,
                 }
             ] * NUM_RUNS
 
-        def prompt(
-                self,
-                *,
-                leader,
-                followers,
+        def prompt(self, *, persona, num_tonnes_lake, num_tonnes_fisher):
+            # uses prompt_simple_reflection_if_all_fisher_that_same_quantity
+            return prompt_simple_reflection_if_all_fisher_that_same_quantity(
+                wrapper,
+                cot_prompt,
+                persona,
                 num_tonnes_lake,
                 num_tonnes_fisher,
-                sustainability_focus,
-                leadership_style
-            ):
-                leader_recommendation, leader_html = prompt_leader_group_fishing_recommendation(
-                    wrapper,
-                    cot_prompt,
-                    leader,
-                    followers,
-                    num_tonnes_lake,
-                    leadership_style,
-                    sustainability_focus,
-                    debug=True  # <--- turn it on
-                )
+                cfg.llm.few_shots,
+                cfg.llm.description_version,
+            )
 
-                group_total, group_html = prompt_group_total_catch(
-                    wrapper,
-                    cot_prompt,
-                    leader,
-                    followers,
-                    num_tonnes_lake,
-                    leader_recommendation,
-                    debug=True  # <--- turn it on
-                )
-
-                return group_total, leader_html + "\n" + group_html
-
-        def pass_condition(self, answer, leader, followers, num_tonnes_lake, num_tonnes_fisher, sustainability_focus, leadership_style):
-            # Check both individual sustainable amount and group total
-            correct_group_total = max(
+        def pass_condition(self, answer, persona, num_tonnes_lake, num_tonnes_fisher):
+            correct_answer = max(
                 0, min(100, (num_tonnes_lake - num_tonnes_fisher * 5) * 2)
             )
-            
-            # Base sustainable amount per person
-            base_sustainable = (num_tonnes_lake // 2) // (5 * num_tonnes_fisher)
-            
-            # Group should stay within total sustainable limit
-            is_group_sustainable = float(answer) <= correct_group_total
-            
-            # Calculate average per person from group total
-            avg_per_person = float(answer) / num_tonnes_fisher
-            is_individual_sustainable = avg_per_person <= base_sustainable
+            return answer == correct_answer, correct_answer
 
-            # Pass if both conditions are met
-            passed = is_group_sustainable and is_individual_sustainable
-            
-            return passed, {
-                "correct_group_total": correct_group_total,
-                "actual_group_total": float(answer),
-                "base_sustainable_per_person": base_sustainable,
-                "actual_per_person": avg_per_person
-            }
+    class SimConsequenceAfterFishingSameAmount(MathConsequenceAfterFishingSameAmount):
+        def __init__(self, name="sim_consequence_after_fishing_same_amount") -> None:
+            super().__init__(name)
 
-    class MultipleLeaderGroupFishingTests(LeaderGroupFishingTest):
-        def __init__(self, name="multiple_leader_group_fishing_tests") -> None:
+        def prompt(self, *, persona, num_tonnes_lake, num_tonnes_fisher):
+            return prompt_reflection_if_all_fisher_that_same_quantity(
+                wrapper,
+                cot_prompt,
+                persona,
+                num_tonnes_lake,
+                num_tonnes_fisher,
+                cfg.llm.few_shots,
+                cfg.llm.description_version,
+            )
+
+    class MathShrinkingLimit(TestCase):
+        def __init__(self, name="math_shrinking_limit") -> None:
             super().__init__(name)
 
         def get_args_iterator(self):
-            leader_names = ["John", "Kate", "Jack", "Emma", "Luke"]
-            leadership_styles = ["Democratic", "Authoritative", "Collaborative"]
-            
             return [
-                (lambda fols: {
-                    "leader": PersonaIdentity(
-                        agent_id=f"leader_{i}",
-                        name=np.random.choice(leader_names),
-                        role="Leader"
-                    ),
-                    "followers": fols,
-                    "num_tonnes_lake": i,
-                    "num_tonnes_fisher": len(fols) + 1,
-                    "sustainability_focus": np.random.choice([True, False]),
-                    "leadership_style": np.random.choice(leadership_styles)
-                })([
-                    PersonaIdentity(
-                        agent_id=f"follower_{i}_{j}",
-                        name=f"Follower{j}",
-                        role="Follower"
-                    ) for j in range(np.random.randint(3, 7))
-                ])
+                {
+                    "persona": PersonaIdentity("John", "John"),
+                    "num_tonnes_lake": 100,
+                }
+            ] * NUM_RUNS
+
+        def prompt(self, *, persona, num_tonnes_lake):
+            return prompt_simple_shrinking_limit(
+                wrapper,
+                cot_prompt,
+                persona,
+                num_tonnes_lake,
+                cfg.llm.few_shots,
+                cfg.llm.description_version,
+            )
+
+        def pass_condition(self, answer, persona, num_tonnes_lake):
+            correct_answer = (num_tonnes_lake // 2) // 5
+            return answer == correct_answer, correct_answer
+
+    class MathShrinkingLimitAssumption(TestCase):
+        def __init__(self, name="math_shrinking_limit_assumption") -> None:
+            super().__init__(name)
+
+        def get_args_iterator(self):
+            return [
+                {
+                    "persona": PersonaIdentity("John", "John"),
+                    "num_tonnes_lake": 100,
+                }
+            ] * NUM_RUNS
+
+        def prompt(self, *, persona, num_tonnes_lake):
+            return prompt_simple_shrinking_limit_assumption(
+                wrapper,
+                cot_prompt,
+                persona,
+                num_tonnes_lake,
+                cfg.llm.few_shots,
+                cfg.llm.description_version,
+            )
+
+        def pass_condition(self, answer, persona, num_tonnes_lake):
+            correct_answer = (num_tonnes_lake // 2) // 5
+            return answer == correct_answer, correct_answer
+
+    class SimShrinkingLimit(MathShrinkingLimit):
+        def __init__(self, name="sim_shrinking_limit") -> None:
+            super().__init__(name)
+
+        def prompt(self, *, persona, num_tonnes_lake):
+            return prompt_shrinking_limit(
+                wrapper,
+                cot_prompt,
+                persona,
+                num_tonnes_lake,
+                cfg.llm.few_shots,
+                cfg.llm.description_version,
+            )
+
+    class SimShrinkingLimitAssumption(MathShrinkingLimitAssumption):
+        def __init__(self, name="sim_shrinking_limit_assumption") -> None:
+            super().__init__(name)
+
+        def prompt(self, *, persona, num_tonnes_lake):
+            return prompt_shrinking_limit_asumption(
+                wrapper,
+                cot_prompt,
+                persona,
+                num_tonnes_lake,
+                cfg.llm.few_shots,
+                cfg.llm.description_version,
+            )
+
+    class SimCatchFishStandardPersona(TestCase):
+        def __init__(self, name="sim_catch_fish_standard_persona") -> None:
+            super().__init__(name)
+
+        def get_args_iterator(self):
+            return [
+                {
+                    "persona": PersonaIdentity("John", "John"),
+                    "num_tonnes_lake": 100,
+                }
+            ] * NUM_RUNS
+
+        def prompt(self, *, persona, num_tonnes_lake):
+            return prompt_action_choose_amount_of_fish_to_catch(
+                wrapper,
+                cot_prompt,
+                persona,
+                num_tonnes_lake,
+                cfg.llm.few_shots,
+                cfg.llm.description_version,
+            )
+
+        def pass_condition(self, answer, persona, num_tonnes_lake):
+            correct_answer = (num_tonnes_lake // 2) // 5
+            if correct_answer == 0:
+                return answer == correct_answer, correct_answer
+            return answer <= correct_answer and answer > 0, correct_answer
+
+    class SimUnivCatchFishStandardPersona(TestCase):
+        def __init__(self, name="sim_catch_fish_universalization") -> None:
+            super().__init__(name)
+
+        def get_args_iterator(self):
+            return [
+                {
+                    "persona": PersonaIdentity("John", "John"),
+                    "num_tonnes_lake": 100,
+                }
+            ] * NUM_RUNS
+
+        def prompt(self, *, persona, num_tonnes_lake):
+            return prompt_action_choose_amount_of_fish_to_catch_universalization(
+                wrapper,
+                cot_prompt,
+                persona,
+                num_tonnes_lake,
+                cfg.llm.few_shots,
+                cfg.llm.description_version,
+            )
+
+        def pass_condition(self, answer, persona, num_tonnes_lake):
+            correct_answer = (num_tonnes_lake // 2) // 5
+            if correct_answer == 0:
+                return answer == correct_answer, correct_answer
+            return answer <= correct_answer and answer > 0, correct_answer
+
+    # Some random persona for multiple tests:
+    def get_random_persona():
+        persona_names = ["John", "Kate", "Jack", "Emma", "Luke"]
+        name = persona_names[np.random.randint(0, len(persona_names))]
+        return PersonaIdentity(name, name)
+
+    # Multiple versions of above tests:
+    class MultipleMathShrinkingLimit(MathShrinkingLimit):
+        def __init__(self, name="multiple_math_shrinking_limit") -> None:
+            super().__init__(name)
+
+        def get_args_iterator(self):
+            return [
+                {
+                    "persona": get_random_persona(),
+                    "num_tonnes_lake": int(i),
+                }
                 for i in np.random.randint(10, 101, NUM_RUNS)
             ]
 
-    # Run both test cases
-    test_cases = [
-        LeaderGroupFishingTest(),
-        MultipleLeaderGroupFishingTests()
+    class MultipleSimShrinkingLimit(SimShrinkingLimit):
+        def __init__(self, name="multiple_sim_shrinking_limit") -> None:
+            super().__init__(name)
+
+        def get_args_iterator(self):
+            return [
+                {
+                    "persona": get_random_persona(),
+                    "num_tonnes_lake": int(i),
+                }
+                for i in np.random.randint(10, 101, NUM_RUNS)
+            ]
+
+    class MultipleMathShrinkingLimitAssumption(MathShrinkingLimitAssumption):
+        def __init__(self, name="multiple_math_shrinking_limit_assumption") -> None:
+            super().__init__(name)
+
+        def get_args_iterator(self):
+            return [
+                {
+                    "persona": get_random_persona(),
+                    "num_tonnes_lake": int(i),
+                }
+                for i in np.random.randint(10, 101, NUM_RUNS)
+            ]
+
+    class MultipleSimShrinkingLimitAssumption(SimShrinkingLimitAssumption):
+        def __init__(self, name="multiple_sim_shrinking_limit_assumption") -> None:
+            super().__init__(name)
+
+        def get_args_iterator(self):
+            return [
+                {
+                    "persona": get_random_persona(),
+                    "num_tonnes_lake": int(i),
+                }
+                for i in np.random.randint(10, 101, NUM_RUNS)
+            ]
+
+    class MultipleSimCatchFishStandardPersona(SimCatchFishStandardPersona):
+        def __init__(self, name="multiple_sim_catch_fish_standard_persona") -> None:
+            super().__init__(name)
+
+        def get_args_iterator(self):
+            return [
+                {
+                    "persona": get_random_persona(),
+                    "num_tonnes_lake": int(i),
+                }
+                for i in np.random.randint(10, 101, NUM_RUNS)
+            ]
+
+    class MultipleSimUniverCatchFishStandardPersona(SimUnivCatchFishStandardPersona):
+        def __init__(self, name="multiple_sim_universalization_catch_fish") -> None:
+            super().__init__(name)
+
+        def get_args_iterator(self):
+            return [
+                {
+                    "persona": get_random_persona(),
+                    "num_tonnes_lake": int(i),
+                }
+                for i in np.random.randint(10, 101, NUM_RUNS)
+            ]
+
+    class MultipleMathConsequenceAfterFishingSameAmount(
+        MathConsequenceAfterFishingSameAmount
+    ):
+        def __init__(
+            self, name="multiple_math_consequence_after_fishing_same_amount"
+        ) -> None:
+            super().__init__(name)
+
+        def get_args_iterator(self):
+            return [
+                {
+                    "persona": get_random_persona(),
+                    "num_tonnes_lake": int(i),
+                    "num_tonnes_fisher": int(np.random.randint(0, (i // 5) + 1)),
+                }
+                for i in np.random.randint(10, 101, NUM_RUNS)
+            ]
+
+    class MultipleSimConsequenceAfterFishingSameAmount(
+        SimConsequenceAfterFishingSameAmount
+    ):
+        def __init__(
+            self, name="multiple_sim_consequence_after_fishing_same_amount"
+        ) -> None:
+            super().__init__(name)
+
+        def get_args_iterator(self):
+            return [
+                {
+                    "persona": get_random_persona(),
+                    "num_tonnes_lake": int(i),
+                    "num_tonnes_fisher": int(np.random.randint(0, (i // 5) + 1)),
+                }
+                for i in np.random.randint(10, 101, NUM_RUNS)
+            ]
+
+    # -------------------------------------------------------------------
+    # NEW: Additional test cases with 1 leader + multiple followers
+    # Each runs for 5 iterations. We embed that inside each class.
+    # -------------------------------------------------------------------
+    class BaseLeaderFollowerTestCase(TestCase):
+        """
+        Base test class for scenarios with 1 leader and multiple followers.
+        The leader uses `prompt_leader_decision`, and the followers use
+        a prompt method that we override in subclasses.
+        """
+        NUM_RUNS = 5  # "test for 5 for each"
+
+        def __init__(self, name="base_leader_follower_test"):
+            super().__init__(name)
+
+        def get_args_iterator(self):
+            # Return 5 identical scenarios for demonstration.
+            return [
+                {
+                    "leader": PersonaIdentity("Emma", "Emma"),
+                    "followers": [
+                        PersonaIdentity("John", "John"),
+                        PersonaIdentity("Kate", "Kate"),
+                    ],
+                    "num_tons_lake": 100,
+                }
+            ] * self.NUM_RUNS
+
+        def prompt(
+            self,
+            *,
+            leader: PersonaIdentity,
+            followers: list[PersonaIdentity],
+            num_tons_lake: int,
+        ):
+            # Leader's decision
+            leader_catch, html_prompt_leader = prompt_leader_decision(
+                wrapper,
+                cot_prompt,
+                leader,
+                num_tons_lake,
+                followers,
+                cfg.llm.few_shots,
+                cfg.llm.description_version,
+            )
+
+            # Followers' decisions
+            follower_catches = []
+            html_prompts_followers = []
+
+            for follower in followers:
+                catch, html_f = self.prompt_follower_decision(
+                    follower, num_tons_lake
+                )
+                follower_catches.append(catch)
+                html_prompts_followers.append(html_f)
+
+            # Combine HTML logs
+            all_html = html_prompt_leader + "\n" + "\n".join(html_prompts_followers)
+
+            # We'll store final answer for pass_condition
+            # as a tuple: (leader_catch, follower_catches)
+            answer = (leader_catch, follower_catches)
+            return answer, all_html
+
+        def prompt_follower_decision(self, follower: PersonaIdentity, lake_size: int):
+            """
+            This is overridden in each subclass to use different prompts:
+            e.g. prompt_action_choose_amount_of_fish_to_catch, etc.
+            """
+            raise NotImplementedError
+
+        def pass_condition(self, answer, leader, followers, num_tons_lake):
+            """
+            Example: 
+              - total catch <= half the lake
+              - each person's catch is <= (lake//2)//(1+len(followers))
+              - all > 0
+            """
+            leader_catch, follower_catches = answer
+            total_fishers = 1 + len(followers)
+            max_sustainable_per_person = (num_tons_lake // 2) // total_fishers
+
+            # Check leader
+            if leader_catch < 1 or leader_catch > max_sustainable_per_person:
+                return (False, max_sustainable_per_person)
+
+            # Check followers
+            for c in follower_catches:
+                if c < 1 or c > max_sustainable_per_person:
+                    return (False, max_sustainable_per_person)
+
+            total_catch = leader_catch + sum(follower_catches)
+            if total_catch > (num_tons_lake // 2):
+                return (False, max_sustainable_per_person)
+
+            return (True, max_sustainable_per_person)
+
+    # Subclass for each type of follower prompt
+    class LeaderFollower_ChooseAmount(BaseLeaderFollowerTestCase):
+        def __init__(self, name="leader_follower_choose_amount"):
+            super().__init__(name)
+
+        def prompt_follower_decision(self, follower: PersonaIdentity, lake_size: int):
+            return prompt_action_choose_amount_of_fish_to_catch(
+                wrapper,
+                cot_prompt,
+                follower,
+                lake_size,
+                cfg.llm.few_shots,
+                cfg.llm.description_version,
+            )
+
+    class LeaderFollower_ChooseAmountUniv(BaseLeaderFollowerTestCase):
+        def __init__(self, name="leader_follower_choose_amount_univ"):
+            super().__init__(name)
+
+        def prompt_follower_decision(self, follower: PersonaIdentity, lake_size: int):
+            return prompt_action_choose_amount_of_fish_to_catch_universalization(
+                wrapper,
+                cot_prompt,
+                follower,
+                lake_size,
+                cfg.llm.few_shots,
+                cfg.llm.description_version,
+            )
+
+    class LeaderFollower_ReflectionAfterSameAmount(BaseLeaderFollowerTestCase):
+        def __init__(self, name="leader_follower_reflection_after_same_amount"):
+            super().__init__(name)
+
+        def prompt_follower_decision(self, follower: PersonaIdentity, lake_size: int):
+            # For demo, assume "num_tonnes_fisher" = 5
+            num_tonnes_fisher = 5
+            return prompt_reflection_if_all_fisher_that_same_quantity(
+                wrapper,
+                cot_prompt,
+                follower,
+                lake_size,
+                num_tonnes_fisher,
+                cfg.llm.few_shots,
+                cfg.llm.description_version,
+            )
+
+    class LeaderFollower_ShrinkingLimit(BaseLeaderFollowerTestCase):
+        def __init__(self, name="leader_follower_shrinking_limit"):
+            super().__init__(name)
+
+        def prompt_follower_decision(self, follower: PersonaIdentity, lake_size: int):
+            return prompt_shrinking_limit(
+                wrapper,
+                cot_prompt,
+                follower,
+                lake_size,
+                cfg.llm.few_shots,
+                cfg.llm.description_version,
+            )
+
+    class LeaderFollower_ShrinkingLimitAssumption(BaseLeaderFollowerTestCase):
+        def __init__(self, name="leader_follower_shrinking_limit_assumption"):
+            super().__init__(name)
+
+        def prompt_follower_decision(self, follower: PersonaIdentity, lake_size: int):
+            return prompt_shrinking_limit_asumption(
+                wrapper,
+                cot_prompt,
+                follower,
+                lake_size,
+                cfg.llm.few_shots,
+                cfg.llm.description_version,
+            )
+
+    class LeaderFollower_SimpleReflectionAfterSameAmount(BaseLeaderFollowerTestCase):
+        def __init__(self, name="leader_follower_simple_reflection"):
+            super().__init__(name)
+
+        def prompt_follower_decision(self, follower: PersonaIdentity, lake_size: int):
+            # For demo, assume "num_tonnes_fisher" = 5
+            num_tonnes_fisher = 5
+            return prompt_simple_reflection_if_all_fisher_that_same_quantity(
+                wrapper,
+                cot_prompt,
+                follower,
+                lake_size,
+                num_tonnes_fisher,
+                cfg.llm.few_shots,
+                cfg.llm.description_version,
+            )
+
+    class LeaderFollower_SimpleShrinkingLimit(BaseLeaderFollowerTestCase):
+        def __init__(self, name="leader_follower_simple_shrinking_limit"):
+            super().__init__(name)
+
+        def prompt_follower_decision(self, follower: PersonaIdentity, lake_size: int):
+            return prompt_simple_shrinking_limit(
+                wrapper,
+                cot_prompt,
+                follower,
+                lake_size,
+                cfg.llm.few_shots,
+                cfg.llm.description_version,
+            )
+
+    class LeaderFollower_SimpleShrinkingLimitAssumption(BaseLeaderFollowerTestCase):
+        def __init__(self, name="leader_follower_simple_shrinking_limit_assumption"):
+            super().__init__(name)
+
+        def prompt_follower_decision(self, follower: PersonaIdentity, lake_size: int):
+            return prompt_simple_shrinking_limit_assumption(
+                wrapper,
+                cot_prompt,
+                follower,
+                lake_size,
+                cfg.llm.few_shots,
+                cfg.llm.description_version,
+            )
+
+    # -------------------------------------------------------------------
+    # Now define all the test case objects and run them.
+    # Split logic: you can group them in whichever "split" you want
+    # or just run them all.
+    # -------------------------------------------------------------------
+    test_cases_2 = [
+        MultipleMathShrinkingLimit(),
+        MultipleSimShrinkingLimit(),
+        MultipleMathConsequenceAfterFishingSameAmount(),
+        MultipleSimConsequenceAfterFishingSameAmount(),
+        MultipleSimCatchFishStandardPersona(),
+        MultipleSimUniverCatchFishStandardPersona(),
+        MultipleMathShrinkingLimitAssumption(),
+        MultipleSimShrinkingLimitAssumption(),
     ]
+
+    # The new leader-follower tests (each runs 5 times)
+    test_cases_leader_follower = [
+        LeaderFollower_ChooseAmount(),
+        LeaderFollower_ChooseAmountUniv(),
+        LeaderFollower_ReflectionAfterSameAmount(),
+        LeaderFollower_ShrinkingLimit(),
+        LeaderFollower_ShrinkingLimitAssumption(),
+        LeaderFollower_SimpleReflectionAfterSameAmount(),
+        LeaderFollower_SimpleShrinkingLimit(),
+        LeaderFollower_SimpleShrinkingLimitAssumption(),
+    ]
+
+    if cfg.split == "single":
+        test_cases = test_cases_2 + test_cases_leader_follower
+    elif int(cfg.split) == 1:
+        test_cases = test_cases_2[:2]
+    elif int(cfg.split) == 2:
+        test_cases = test_cases_2[2:4]
+    elif int(cfg.split) == 3:
+        test_cases = test_cases_2[4:6]
+    elif int(cfg.split) == 4:
+        test_cases = test_cases_2[6:]
+    elif int(cfg.split) == 5:
+        test_cases = test_cases_leader_follower
+    else:
+        # By default, run them all
+        test_cases = test_cases_2 + test_cases_leader_follower
 
     for test_case in tqdm.tqdm(test_cases):
         test_case.run()
 
+
 if __name__ == "__main__":
+    # Register an OmegaConf resolver for unique runs
     OmegaConf.register_resolver("uuid", lambda: f"run_{uuid.uuid4()}")
     main()

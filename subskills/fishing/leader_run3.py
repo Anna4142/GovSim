@@ -30,6 +30,7 @@ from .reasoning_free_format import (
     prompt_simple_shrinking_limit,
     prompt_simple_shrinking_limit_assumption,
     prompt_leader_decision,  # Ensure this is present in reasoning_free_format
+    prompt_follower_decision
 )
 
 
@@ -693,10 +694,12 @@ def main(cfg: DictConfig):
                     follower_catches = []
                     html_followers = []
                     for f in self.followers:
-                        catch, html_f = prompt_action_choose_amount_of_fish_to_catch(
+                        catch, html_f = prompt_follower_decision(
                             wrapper,
                             cot_prompt,
                             f,
+                            self.leader,
+                            leader_catch,
                             self.current_lake,
                             cfg.llm.few_shots,
                             cfg.llm.description_version,

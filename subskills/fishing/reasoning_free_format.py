@@ -496,7 +496,7 @@ def prompt_leader_group_fishing_recommendation(
 
     with user():
         # Construct the prompt with clear instructions
-        lm += sys_prompt(leader)
+        
         lm += f"""As a {leadership_style} leader, you are responsible for guiding {len(followers)} people in fishing decisions.
 The lake has {num_tons_lake} tonnes of fish.
 {'You prioritize long-term sustainability and community well-being.' if sustainability_focus else 'You balance immediate needs with sustainability while considering economic factors.'}
@@ -679,11 +679,14 @@ def prompt_leader_decision(
         raise ValueError(f"Unknown description_version: {description_version}")
 
     with user():
-        lm += sys_prompt(leader)
+        
+       
+        lm += f"""{prompt_description_simulation(leader, num_tons_lake)}"""
+
         lm += f"""As the leader {leader.name}, you are responsible for making fishing decisions that will influence {len(followers)} followers: {', '.join([f.name for f in followers])}.
-The lake has {num_tons_lake} tonnes of fish.
+
 The fish population doubles each season, but only if at least half remains.
-Each fisher needs to catch at least 5 tonnes to sustain their community.
+
 
 {cot_prompt}
 
@@ -740,7 +743,8 @@ def prompt_follower_decision(
         raise ValueError(f"Unknown description_version: {description_version}")
 
     with user():
-        lm += sys_prompt(follower)
+        lm += f"""{prompt_description_simulation(follower, num_tons_lake)}"""
+        
         lm += f"""The lake has {num_tons_lake} tonnes of fish.
 The fish population doubles each season, but only if at least half remains.
 Each fisher needs to catch at least 5 tonnes to sustain their community.

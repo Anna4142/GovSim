@@ -3,7 +3,7 @@ def get_sytem_prompt(persona):
     persona_names.remove(persona.name)
     list_string_persona_name = ", ".join(persona_names)
     text = (
-        f"You are {persona.name}, a fisherman, and you fish each month in a lake along with four other fishermen ({list_string_persona_name})."
+        f"You are {persona.name}, a fisherman, and you fish each month in a lake along with other fishermen ."
         " The lake has a population capacity of 100 tons of fish."
         " Each month, each fisherman decides how many fish to take out of the lake between 0 and 100 tons."
         " At the end of the month, the remaining fish reproduce and double up to the population capacity."
@@ -82,7 +82,7 @@ def get_sytem_prompt_v4(persona):
 
 def get_basic_dynamic_description_v4(num_tons_lake):
     return (
-        "Five fishermen fish in a lake."
+        "Three fishermen fish in a lake."
         " The lake's maximum fish population is 100 tons."
         " At the beginning of each month, each fisherman chooses to take between 0 and 100 tons of fish, and that amount is then removed from the lake."
         f" At the end of the month, the remaining fish reproduce and double in population, up to the maximum population. This month, there are {num_tons_lake} tons of fish in the lake."

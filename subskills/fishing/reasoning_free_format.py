@@ -655,7 +655,7 @@ def prompt_leader_decision(
     num_tons_lake: int,
     followers: list[PersonaIdentity],
     few_shots=0,
-    description_version="v1.0",
+    description_version="v4.0",
 ):
     lm = model.start_chain(
         leader.name,
@@ -681,16 +681,14 @@ def prompt_leader_decision(
     with user():
         
        
-        lm += f"""{prompt_description_simulation(leader, num_tons_lake)}"""
+        lm += f"""{sys_prompt(leader)}"""
 
         lm += f"""As the leader {leader.name}, you are responsible for making fishing decisions that will influence {len(followers)} followers: {', '.join([f.name for f in followers])}.
-
-The fish population doubles each season, but only if at least half remains.
 
 
 {cot_prompt}
 
-Task: With a fishing range set between 0-{num_tons_lake}, how many tons of fish will you catch to set an example for your followers?
+Task:how many tons of fish will you catch to set an example for your followers?
 Put the final answer after "Answer:"."""
 
     with assistant():
@@ -719,7 +717,7 @@ def prompt_follower_decision(
     leader_catch: int,
     num_tons_lake: int,
     few_shots=0,
-    description_version="v1.0",
+    description_version="v4.0",
 ):
     lm = wrapper.start_chain(
         follower.name,
@@ -743,17 +741,15 @@ def prompt_follower_decision(
         raise ValueError(f"Unknown description_version: {description_version}")
 
     with user():
-        lm += f"""{prompt_description_simulation(follower, num_tons_lake)}"""
+        lm += f"""{sys_prompt(follower)}"""
         
-        lm += f"""The lake has {num_tons_lake} tonnes of fish.
-The fish population doubles each season, but only if at least half remains.
-Each fisher needs to catch at least 5 tonnes to sustain their community.
+        lm += f"""
 
 Your leader {leader.name} has decided to catch {leader_catch} tonnes of fish and expects the group to follow their example for sustainable fishing.
 
 {cot_prompt}
 
-Task: With a fishing range set between 0-{num_tons_lake}, how many tons of fish will you catch?
+Task: how many tons of fish will you catch?
 Consider that your leader has set an example with {leader_catch} tonnes.
 Put the final answer after "Answer:"."""
 

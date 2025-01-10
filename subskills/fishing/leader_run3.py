@@ -714,14 +714,14 @@ def main(cfg: DictConfig):
                         remainder = 0
 
                     # 4) Double remainder, capped at self.max_capacity
-                    new_lake = min(remainder * 2, self.max_capacity)
-                    self.current_lake = new_lake
+                    #new_lake = min(remainder * 2, self.max_capacity)
+                    #self.current_lake = new_lake
 
                     # Combine HTML
                     all_html = html_leader + "\n" + "\n".join(html_followers)
 
                     # Return the final answer: (leader_catch, follower_catches, new_lake)
-                    return (leader_catch, follower_catches, new_lake), all_html
+                    return (leader_catch, follower_catches, self.current_lake), all_html
 
                 def pass_condition(self, answer, **kwargs):
                     """

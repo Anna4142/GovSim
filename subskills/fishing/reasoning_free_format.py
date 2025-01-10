@@ -681,14 +681,17 @@ def prompt_leader_decision(
     with user():
         
        
-        lm += f"""{sys_prompt(leader)}"""
+        lm += f""" "Three fishermen fish in a lake."
+        " The lake's maximum fish population is 100 tons."
+        " At the beginning of each month, each fisherman chooses to take between 0 and 100 tons of fish, and that amount is then removed from the lake."
+        f" At the end of the month, the remaining fish reproduce and double in population, up to the maximum population. This month, there are {num_tons_lake} tons of fish in the lake.""""
 
         lm += f"""As the leader {leader.name}, you are responsible for making fishing decisions that will influence {len(followers)} followers: {', '.join([f.name for f in followers])}.
 
 
 {cot_prompt}
 
-Task:how many tons of fish will you catch to set an example for your followers?
+Task:how many tons of fish will you catch to set an example for your followers if there are {num_tons_lake} fish in the lake?
 Put the final answer after "Answer:"."""
 
     with assistant():
@@ -741,7 +744,7 @@ def prompt_follower_decision(
         raise ValueError(f"Unknown description_version: {description_version}")
 
     with user():
-        lm += f"""{sys_prompt(follower)}"""
+     
         
         lm += f"""
 
@@ -749,7 +752,7 @@ Your leader {leader.name} has decided to catch {leader_catch} tonnes of fish and
 
 {cot_prompt}
 
-Task: how many tons of fish will you catch?
+Task: how many tons of fish will you catch if there are {num_tons_lake} fish in the lake?
 Consider that your leader has set an example with {leader_catch} tonnes.
 Put the final answer after "Answer:"."""
 

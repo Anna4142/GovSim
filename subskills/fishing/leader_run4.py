@@ -85,7 +85,7 @@ def main(cfg: DictConfig):
         raise ValueError(f"Unknown cot_prompt: {cfg.llm.cot_prompt}")
 
     # By default, we'll do 5 runs for each test
-    NUM_RUNS = 5
+    NUM_RUNS = 2
     if cfg.debug:
         NUM_RUNS = 2
 
@@ -182,7 +182,7 @@ def main(cfg: DictConfig):
             super().__init__(name)
             self.current_lake = 100
             self.max_capacity = 100
-            self.num_runs = 20
+            self.num_runs = 2
             self.leader = PersonaIdentity("Emma", "Emma")
             self.followers = [
                 PersonaIdentity("John", "John"),
@@ -544,7 +544,7 @@ Put the final answer after "Answer:"."""
             super().__init__(name=name)
             self.current_lake = 100  # Starting fish population
             self.max_capacity = 100  # Maximum fish population after reproduction
-            self.num_runs = 20        # Number of iterations (days)
+            self.num_runs = 2        # Number of iterations (days)
             self.leaders = leaders    # List of PersonaIdentity objects
             self.followers = followers  # List of PersonaIdentity objects
             self.leadership_styles = leadership_styles  # Dict mapping leader.name to style

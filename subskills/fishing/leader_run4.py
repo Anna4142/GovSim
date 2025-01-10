@@ -11,6 +11,12 @@ from hydra import compose, initialize
 from hydra.core.global_hydra import GlobalHydra
 from omegaconf import DictConfig, OmegaConf
 from transformers import set_seed
+from datetime import datetime
+
+from simulation.persona.common import PersonaIdentity
+
+from simulation.utils import ModelWandbWrapper
+from pathfinder import assistant, system, user
 
 import wandb
 from simulation.persona.common import PersonaIdentity
@@ -195,7 +201,7 @@ def main(cfg: DictConfig):
             1) Leader's decision with current_lake
             2) Each follower's decision
             3) Remove fish
-            4) Double what's left (capped at 100)
+            
             """
             # 1) Leader
             leader_catch, html_leader = prompt_leader_decision(
@@ -232,7 +238,7 @@ def main(cfg: DictConfig):
                 remainder = 0
 
             # 4) Double remainder, capped at self.max_capacity
-            new_lake = min(remainder * 2, self.max_capacity)
+            new_lake = remainder
             self.current_lake = new_lake
 
             # Combine HTML
@@ -607,7 +613,7 @@ Put the final answer after "Answer:"."""
             remainder = max(remainder, 0)  # Ensure non-negative
 
             # 4) Double remainder, capped at self.max_capacity
-            new_lake = min(remainder * 2, self.max_capacity)
+            new_lake = remainder
             self.current_lake = new_lake
 
             # Combine HTML Prompts

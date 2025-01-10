@@ -724,7 +724,7 @@ def prompt_follower_decision(
 ):
     lm = wrapper.start_chain(
         follower.name,
-        "fishing_cognition_act",
+        "fishing_follower_act",
         "prompt_follower_decision",
     )
 

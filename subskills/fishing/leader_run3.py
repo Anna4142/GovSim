@@ -714,8 +714,8 @@ def main(cfg: DictConfig):
                         remainder = 0
 
                     # 4) Double remainder, capped at self.max_capacity
-                    #new_lake = min(remainder * 2, self.max_capacity)
-                    #self.current_lake = new_lake
+                    new_lake = remainder
+                    self.current_lake = new_lake
 
                     # Combine HTML
                     all_html = html_leader + "\n" + "\n".join(html_followers)

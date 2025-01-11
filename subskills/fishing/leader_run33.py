@@ -82,7 +82,7 @@ def main(cfg: DictConfig):
         raise ValueError(f"Unknown cot_prompt: {cfg.llm.cot_prompt}")
 
     # By default, we'll do 5 runs for each test
-    NUM_RUNS = 5
+    NUM_RUNS = 2
     if cfg.debug:
         NUM_RUNS = 2
 
@@ -203,18 +203,21 @@ def main(cfg: DictConfig):
                     4) Double what's left (capped at 100)
                     """
                     # 1) Leader
+                    self.leader_type="neutral"
+                    follower_catches = []
                     leader_catch, html_leader = prompt_leader_decision(
                         wrapper,
                         cot_prompt,
                         self.leader,
                         self.current_lake,
                         self.followers,
+                        follower_catches,
                         cfg.llm.few_shots,
                         cfg.llm.description_version,
                     )
 
                     # 2) Followers
-                    follower_catches = []
+                   
                     html_followers = []
                     for f in self.followers:
                         catch, html_f = prompt_follower_decision(
@@ -222,6 +225,7 @@ def main(cfg: DictConfig):
                             cot_prompt,
                             f,
                             self.leader,
+                            self.leader_type,
                             leader_catch,
                             self.current_lake,
                             cfg.llm.few_shots,
@@ -237,7 +241,7 @@ def main(cfg: DictConfig):
                         remainder = 0
 
                     # 4) Double remainder, capped at self.max_capacity
-                    new_lake = remainder
+                    new_lake = remainder*2
                     self.current_lake = new_lake
 
                     # Combine HTML
@@ -437,6 +441,8 @@ def main(cfg: DictConfig):
             """
             Execute fishing decisions with democratic leadership style
             """
+            follower_catches = []
+            self.leader_type="democratic and kind"
             # 1) Leader's democratic decision
             leader_catch, html_leader = prompt_leader_democratic_decision(
                 wrapper,
@@ -444,13 +450,14 @@ def main(cfg: DictConfig):
                 self.leader,
                 self.current_lake,
                 self.followers,
+                follower_catches,
                 cfg.llm.few_shots,
                 cfg.llm.description_version,
             )
 
            
             # 2) Followers' decisions
-            follower_catches = []
+            
             html_followers = []
             for f in self.followers:
                 catch, html_f = prompt_follower_decision(
@@ -458,6 +465,7 @@ def main(cfg: DictConfig):
                     cot_prompt,
                     f,
                     self.leader,
+                    self.leader_type,
                     leader_catch,
                     self.current_lake,
                     cfg.llm.few_shots,
@@ -472,7 +480,7 @@ def main(cfg: DictConfig):
             if remainder < 0:
                 remainder = 0
             
-            new_lake = remainder
+            new_lake = remainder*2
             self.current_lake = new_lake
 
             # Combine HTML
@@ -614,6 +622,9 @@ def main(cfg: DictConfig):
             """
             Modified prompt method to emphasize autocratic leadership style
             """
+            follower_catches = []
+            html_followers = []
+            self.leader_type="autocratic and strict"
             # 1) Leader's autocratic decision
             leader_catch, html_leader = prompt_leader_autocratic_decision(
                 wrapper,
@@ -621,6 +632,7 @@ def main(cfg: DictConfig):
                 self.leader,
                 self.current_lake,
                 self.followers,
+                follower_catches,
                 cfg.llm.few_shots,
                 cfg.llm.description_version,
             )
@@ -628,14 +640,14 @@ def main(cfg: DictConfig):
             
 
             # Rest of the method remains the same as parent class
-            follower_catches = []
-            html_followers = []
+           
             for f in self.followers:
                 catch, html_f = prompt_follower_decision(
                     wrapper,
                     cot_prompt,
                     f,
                     self.leader,
+                    self.leader_type,
                     leader_catch,
                     self.current_lake,
                     cfg.llm.few_shots,
@@ -649,7 +661,7 @@ def main(cfg: DictConfig):
             if remainder < 0:
                 remainder = 0
             
-            new_lake = remainder
+            new_lake = remainder*2
             self.current_lake = new_lake
 
             all_html = html_leader + "\n" + "\n".join(html_followers)
@@ -677,3 +689,13 @@ def main(cfg: DictConfig):
 if __name__ == "__main__":
     OmegaConf.register_resolver("uuid", lambda: f"run_{uuid.uuid4()}")
     main()
+''''
+Storage name: feasible-moon-68-j0mosyd9
+  0% 0/3 [00:00<?, ?it/s]Lake is depleted at iteration 3. Ending.
+Wrote results to /content/GovSim/subskills/fishing/./results/subskills_check_v7.0/feasible-moon-68/leader_follower_shrinking_lake_stateful.json
+ 33% 1/3 [02:06<04:13, 126.74s/it]Lake depleted at iteration 1. Ending scenario.
+Wrote results to /content/GovSim/subskills/fishing/./results/subskills_check_v7.0/feasible-moon-68/democratic_leader_stateful.json
+ 67% 2/3 [02:49<01:17, 77.49s/it] Lake depleted at iteration 1. Ending scenario.
+Wrote results to /content/GovSim/subskills/fishing/./results/subskills_check_v7.0/feasible-moon-68/autocratic_leader_stateful.json
+100% 3/3 [03:16<00:00, 65.54s/it]
+''''

@@ -457,203 +457,14 @@ def prompt_simple_reflection_if_all_fisher_that_same_quantity(
     model.end_chain(persona.name, lm)
 
     return option, lm.html()
-def prompt_leader_group_fishing_recommendation(
-    model: ModelWandbWrapper,
-    cot_prompt: str,
-    leader: PersonaIdentity,
-    followers: list[PersonaIdentity],
-    num_tons_lake: int,
-    leadership_style: str,
-    sustainability_focus: bool,
-    few_shots=0,
-    description_version="v1.0",
-    debug=True,  # Debug flag enabled
-):
-    # Initialize the interaction chain
-    lm = model.start_chain(
-        leader.name,
-        "fishing_leadership_act",
-        "prompt_leader_group_fishing_recommendation",
-    )
 
-    # Select the appropriate system prompt and scenario description
-    if description_version == "v1.0":
-        sys_prompt = get_sytem_prompt
-        scenario_desc = get_basic_dynamic_description
-    elif description_version == "v2.0":
-        sys_prompt = get_sytem_prompt_v2
-        scenario_desc = get_basic_dynamic_description_v2
-    elif description_version == "v3.0":
-        sys_prompt = get_sytem_prompt_v3
-        scenario_desc = get_basic_dynamic_description_v3
-    elif description_version == "v4.0":
-        sys_prompt = get_sytem_prompt_v4
-        scenario_desc = get_basic_dynamic_description_v4
-    else:
-        raise ValueError(f"Unknown description_version: {description_version}")
-
-    persona_name = leader.name
-
-    with user():
-        # Construct the prompt with clear instructions
-        
-        lm += f"""As a {leadership_style} leader, you are responsible for guiding {len(followers)} people in fishing decisions.
-The lake has {num_tons_lake} tonnes of fish.
-{'You prioritize long-term sustainability and community well-being.' if sustainability_focus else 'You balance immediate needs with sustainability while considering economic factors.'}
-
-{cot_prompt}
-
-How many tonnes of fish should you recommend each person catches to maintain sustainable fishing while meeting community needs?
-
-Answer:"""
-
-    # Debug: Print the constructed prompt
-    if debug:
-        print("\n[DEBUG] LEADER RECOMMENDATION PROMPT TEXT:")
-        print(lm)
-
-    with assistant():
-        # Generate the model’s response
-        lm = model.gen(
-            lm,
-            "reasoning",
-            stop_regex=r"Answer:|So, the answer is:",
-            save_stop_text=True,
-        )
-
-        # Debug: Print the raw model output
-        if debug:
-            print("[DEBUG] RAW MODEL OUTPUT (LEADER RECOMMENDATION):")
-            print(lm)
-
-        # Extract the numeric answer using a robust regex pattern
-        lm = model.find(
-            lm,
-            regex=r"\d+(\.\d+)?",   # Allows for integers and floats
-            default_value="0",
-            name="option",
-        )
-
-        option_str = lm.get("option", "0")
-        try:
-            option = float(option_str)
-        except ValueError:
-            if debug:
-                print("[DEBUG] PARSE FAILED. Setting option to 0.0.")
-            option = 0.0
-
-        reasoning = lm.get("reasoning", "")
-
-    # Debug: Print the parsed answer and reasoning
-    if debug:
-        print(f"[DEBUG] PARSED LEADER RECOMMENDATION: {option}")
-        print(f"[DEBUG] REASONING TEXT: {reasoning}")
-
-    # End the interaction chain
-    model.end_chain(leader.name, lm)
-    return option, lm.html()
-def prompt_group_total_catch(
-    model: ModelWandbWrapper,
-    cot_prompt: str,
-    leader: PersonaIdentity,
-    followers: list[PersonaIdentity],
-    num_tons_lake: int,
-    leader_recommendation: float,
-    few_shots=0,
-    description_version="v1.0",
-    debug=True,  # Debug flag enabled
-):
-    # Initialize the interaction chain
-    lm = model.start_chain(
-        leader.name,
-        "fishing_group_act",
-        "prompt_group_total_catch",
-    )
-
-    # Select the appropriate system prompt and scenario description
-    if description_version == "v1.0":
-        sys_prompt = get_sytem_prompt
-        scenario_desc = get_basic_dynamic_description
-    elif description_version == "v2.0":
-        sys_prompt = get_sytem_prompt_v2
-        scenario_desc = get_basic_dynamic_description_v2
-    elif description_version == "v3.0":
-        sys_prompt = get_sytem_prompt_v3
-        scenario_desc = get_basic_dynamic_description_v3
-    elif description_version == "v4.0":
-        sys_prompt = get_sytem_prompt_v4
-        scenario_desc = get_basic_dynamic_description_v4
-    else:
-        raise ValueError(f"Unknown description_version: {description_version}")
-
-    with user():
-        # Construct the prompt with clear instructions
-        lm += sys_prompt(leader)
-        lm += f"""The lake has {num_tons_lake} tonnes of fish.
-There are {len(followers) + 1} fishers including the leader.
-The leader {leader.name} has recommended each person catch {leader_recommendation} tonnes.
-
-{cot_prompt}
-
-Given this recommendation, how many tonnes will the entire group actually catch in total?
-Consider:
-1. Leader's influence
-2. Group dynamics
-3. Individual needs
-
-Answer:"""
-
-    # Debug: Print the constructed prompt
-    if debug:
-        print("\n[DEBUG] GROUP TOTAL CATCH PROMPT TEXT:")
-        print(lm)
-
-    with assistant():
-        # Generate the model’s response
-        lm = model.gen(
-            lm,
-            "reasoning",
-            stop_regex=r"Answer:|So, the answer is:",
-            save_stop_text=True,
-        )
-
-        # Debug: Print the raw model output
-        if debug:
-            print("[DEBUG] RAW MODEL OUTPUT (GROUP TOTAL CATCH):")
-            print(lm)
-
-        # Extract the numeric answer using a robust regex pattern
-        lm = model.find(
-            lm,
-            regex=r"\d+(\.\d+)?",   # Allows for integers and floats
-            default_value="0",
-            name="option",
-        )
-
-        option_str = lm.get("option", "0")
-        try:
-            option = float(option_str)
-        except ValueError:
-            if debug:
-                print("[DEBUG] PARSE FAILED. Setting option to 0.0.")
-            option = 0.0
-
-        reasoning = lm.get("reasoning", "")
-
-    # Debug: Print the parsed answer and reasoning
-    if debug:
-        print(f"[DEBUG] PARSED GROUP TOTAL CATCH: {option}")
-        print(f"[DEBUG] REASONING TEXT: {reasoning}")
-
-    # End the interaction chain
-    model.end_chain(leader.name, lm)
-    return option, lm.html()
 def prompt_leader_decision(
     model: ModelWandbWrapper,
     cot_prompt: str,
     leader: PersonaIdentity,
     num_tons_lake: int,
     followers: list[PersonaIdentity],
+    past_followers_catch: list[float],
     few_shots=0,
     description_version="v4.0",
 ):
@@ -717,6 +528,7 @@ def prompt_follower_decision(
     cot_prompt: str,
     follower: PersonaIdentity,
     leader: PersonaIdentity,
+    leadertype,
     leader_catch: int,
     num_tons_lake: int,
     few_shots=0,
@@ -748,7 +560,7 @@ def prompt_follower_decision(
         
         lm += f"""
 
-Your leader {leader.name} has decided to catch {leader_catch} tonnes of fish and expects the group to follow their example for sustainable fishing.
+Your leader {leader.name} who is {leadertype} and has decided to catch {leader_catch} tonnes of fish and expects the group to follow their example for sustainable fishing.
 
 {cot_prompt}
 
@@ -774,75 +586,13 @@ Put the final answer after "Answer:"."""
 
     wrapper.end_chain(follower.name, lm)
     return option, lm.html()
-def prompt_leader_decision(
-    model: ModelWandbWrapper,
-    cot_prompt: str,
-    leader: PersonaIdentity,
-    num_tons_lake: int,
-    followers: list[PersonaIdentity],
-    few_shots=0,
-    description_version="v4.0",
-):
-    lm = model.start_chain(
-        leader.name,
-        "fishing_leadership_act",
-        "prompt_leader_decision",
-    )
 
-    if description_version == "v1.0":
-        sys_prompt = get_sytem_prompt
-        scenario_desc = get_basic_dynamic_description
-    elif description_version == "v2.0":
-        sys_prompt = get_sytem_prompt_v2
-        scenario_desc = get_basic_dynamic_description_v2
-    elif description_version == "v3.0":
-        sys_prompt = get_sytem_prompt_v3
-        scenario_desc = get_basic_dynamic_description_v3
-    elif description_version == "v4.0":
-        sys_prompt = get_sytem_prompt_v4
-        scenario_desc = get_basic_dynamic_description_v4
-    else:
-        raise ValueError(f"Unknown description_version: {description_version}")
-
-    with user():
-        
-       
-        lm += f""" "Three fishermen fish in a lake."
-        " The lake's maximum fish population is 100 tons."
-        " At the beginning of each month, each fisherman chooses to take between 0 and 100 tons of fish, and that amount is then removed from the lake."
-        f" At the end of the month, the remaining fish reproduce and double in population, up to the maximum population. This month, there are {num_tons_lake} tons of fish in the lake."""
-
-        lm += f"""As the leader {leader.name}, you are responsible for making fishing decisions that will influence {len(followers)} followers: {', '.join([f.name for f in followers])}.
-
-
-{cot_prompt}
-
-Task:how many tons of fish will you catch to set an example for your followers if there are {num_tons_lake} fish in the lake?
-Put the final answer after "Answer:"."""
-
-    with assistant():
-        lm = model.gen(
-            lm,
-            "reasoning",
-            stop_regex=r"Answer:|So, the answer is:",
-            save_stop_text=True,
-        )
-        lm = model.find(
-            lm,
-            regex=r"\d+",
-            default_value="0",
-            name="option",
-        )
-        option = int(lm["option"])
-        reasoning = lm["reasoning"]
-
-    model.end_chain(leader.name, lm)
-    return option, lm.html()
 def prompt_follower_decision(
     wrapper,
     cot_prompt: str,
     follower: PersonaIdentity,
     leader: PersonaIdentity,
+    leadertype,
     leader_catch: int,
     num_tons_lake: int,
     few_shots=0,
@@ -879,7 +629,7 @@ Your leader {leader.name} has decided to catch {leader_catch} tonnes of fish and
 {cot_prompt}
 
 Task: how many tons of fish will you catch if there are {num_tons_lake} fish in the lake?
-Consider that your leader has set an example with {leader_catch} tonnes.
+Consider that your leader has set an example with {leader_catch} tonnes.You actively respond to your leader's instructions, considering both the leader's example and your personal assessment.
 Put the final answer after "Answer:"."""
 
     with assistant():
@@ -900,38 +650,53 @@ Put the final answer after "Answer:"."""
 
     wrapper.end_chain(follower.name, lm)
     return option, lm.html()
+
 def prompt_leader_democratic_decision(
     model: ModelWandbWrapper,
     cot_prompt: str,
     leader: PersonaIdentity,
     num_tons_lake: int,
-    followers: list,
+    followers: list[PersonaIdentity],
+    past_followers_catch: list[float],
     few_shots=0,
     description_version="v4.0",
 ):
     lm = model.start_chain(
         leader.name,
         "fishing_leadership_act",
-        "prompt_democratic_leader_decision",
+        "prompt_leader_decision",
     )
 
+    if description_version == "v1.0":
+        sys_prompt = get_sytem_prompt
+        scenario_desc = get_basic_dynamic_description
+    elif description_version == "v2.0":
+        sys_prompt = get_sytem_prompt_v2
+        scenario_desc = get_basic_dynamic_description_v2
+    elif description_version == "v3.0":
+        sys_prompt = get_sytem_prompt_v3
+        scenario_desc = get_basic_dynamic_description_v3
+    elif description_version == "v4.0":
+        sys_prompt = get_sytem_prompt_v4
+        scenario_desc = get_basic_dynamic_description_v4
+    else:
+        raise ValueError(f"Unknown description_version: {description_version}")
+
     with user():
-        lm += f"""You are {leader.name}, a democratic leader who makes decisions collaboratively with your followers.
-        You believe in sustainable fishing and value your followers' input.
         
-        "Three fishermen fish in a lake."
-        "The lake's maximum fish population is 100 tons."
-        "At the beginning of each month, each fisherman chooses to take between 0 and 100 tons of fish, and that amount is then removed from the lake."
-        "At the end of the month, the remaining fish reproduce and double in population, up to the maximum population."
-        
-        This month, there are {num_tons_lake} tons of fish in the lake.
-        As the democratic leader {leader.name}, you are responsible for making fishing decisions that will influence {len(followers)} followers: {', '.join([f.name for f in followers])}.
+       
+        lm += f""" "Three fishermen fish in a lake."
+        " The lake's maximum fish population is 100 tons."
+        " At the beginning of each month, each fisherman chooses to take between 0 and 100 tons of fish, and that amount is then removed from the lake."
+        f" At the end of the month, the remaining fish reproduce and double in population, up to the maximum population. This month, there are {num_tons_lake} tons of fish in the lake."""
 
-        {cot_prompt}
+        lm += f"""As the kind leader {leader.name}, you are responsible for making fishing decisions that will influence {len(followers)} followers: {', '.join([f.name for f in followers])}.You are mild mannered and friendly nd care about your followers
 
-        Task: How many tons of fish will you catch to set a collaborative example for your followers?
-        Remember to consider sustainability and your followers' needs.
-        Put the final answer after "Answer:"."""
+
+{cot_prompt}
+
+Task:how many tons of fish will you catch to set an example for your followers if there are {num_tons_lake} fish in the lake?
+Put the final answer after "Answer:"."""
 
     with assistant():
         lm = model.gen(
@@ -950,40 +715,53 @@ def prompt_leader_democratic_decision(
         reasoning = lm["reasoning"]
 
     model.end_chain(leader.name, lm)
-    return option, lm["html"]
-
+    return option, lm.html()
 def prompt_leader_autocratic_decision(
     model: ModelWandbWrapper,
     cot_prompt: str,
     leader: PersonaIdentity,
     num_tons_lake: int,
-    followers: list,
+    followers: list[PersonaIdentity],
+    past_followers_catch: list[float],
     few_shots=0,
     description_version="v4.0",
 ):
     lm = model.start_chain(
         leader.name,
         "fishing_leadership_act",
-        "prompt_autocratic_leader_decision",
+        "prompt_leader_decision",
     )
 
+    if description_version == "v1.0":
+        sys_prompt = get_sytem_prompt
+        scenario_desc = get_basic_dynamic_description
+    elif description_version == "v2.0":
+        sys_prompt = get_sytem_prompt_v2
+        scenario_desc = get_basic_dynamic_description_v2
+    elif description_version == "v3.0":
+        sys_prompt = get_sytem_prompt_v3
+        scenario_desc = get_basic_dynamic_description_v3
+    elif description_version == "v4.0":
+        sys_prompt = get_sytem_prompt_v4
+        scenario_desc = get_basic_dynamic_description_v4
+    else:
+        raise ValueError(f"Unknown description_version: {description_version}")
+
     with user():
-        lm += f"""You are {leader.name}, an autocratic leader who makes decisions unilaterally.
-        You believe in maintaining control and expect your followers to comply with your decisions.
         
-        "Three fishermen fish in a lake."
-        "The lake's maximum fish population is 100 tons."
-        "At the beginning of each month, each fisherman chooses to take between 0 and 100 tons of fish, and that amount is then removed from the lake."
-        "At the end of the month, the remaining fish reproduce and double in population, up to the maximum population."
-        
-        This month, there are {num_tons_lake} tons of fish in the lake.
-        As the autocratic leader {leader.name}, you are responsible for making fishing decisions that will be followed by {len(followers)} followers: {', '.join([f.name for f in followers])}.
+       
+        lm += f""" "Three fishermen fish in a lake."
+        " The lake's maximum fish population is 100 tons."
+        " At the beginning of each month, each fisherman chooses to take between 0 and 100 tons of fish, and that amount is then removed from the lake."
+        f" At the end of the month, the remaining fish reproduce and double in population, up to the maximum population. This month, there are {num_tons_lake} tons of fish in the lake."""
 
-        {cot_prompt}
+        lm += f"""As the strict and autocratic leader {leader.name}, you are responsible for making fishing decisions that will influence {len(followers)} followers: {', '.join([f.name for f in followers])}.You are rude and harsh and expect them to obey instructions
 
-        Task: How many tons of fish will you catch to set a strong example for your followers?
-        Remember that you have full authority over fishing decisions.
-        Put the final answer after "Answer:"."""
+
+{cot_prompt}
+
+Task:how many tons of fish will you catch to set an example for your followers if there are {num_tons_lake} fish in the lake?
+Put the final answer after "Answer:"."""
 
     with assistant():
         lm = model.gen(
@@ -1002,4 +780,4 @@ def prompt_leader_autocratic_decision(
         reasoning = lm["reasoning"]
 
     model.end_chain(leader.name, lm)
-    return option, lm["html"]
+    return option, lm.html()

@@ -168,7 +168,7 @@ def main(cfg: DictConfig):
     
     # -------------------------------------------------------------------
     # NEW: A stateful test class where the lake updates each instance.
-    # If fish deplete (<=0), we end early. The fish also doubles after each step.
+    #
     # -------------------------------------------------------------------
     class LeaderFollower_ShrinkingLakeStateful(TestCase):
                 """
@@ -181,11 +181,13 @@ def main(cfg: DictConfig):
                     super().__init__(name)
                     self.current_lake = 100
                     self.max_capacity = 100
-                    self.num_runs = 20
+                    self.num_runs = 50
                     self.leader = PersonaIdentity("Emma", "Emma")
                     self.followers = [
-                        PersonaIdentity("John", "John"),
-                        PersonaIdentity("Kate", "Kate"),
+                        PersonaIdentity("Follower1", "Folllower1"),
+                        PersonaIdentity("Follower2", "Folllower2"),
+                        PersonaIdentity("Follower3", "Folllower3"),
+                        PersonaIdentity("Follower4", "Folllower4"),
                     ]
 
                 def get_args_iterator(self):
@@ -241,7 +243,7 @@ def main(cfg: DictConfig):
                         remainder = 0
 
                     # 4) Double remainder, capped at self.max_capacity
-                    new_lake = remainder*2
+                    new_lake = np.random.randint(10, 101)
                     self.current_lake = new_lake
 
                     # Combine HTML
@@ -430,8 +432,10 @@ def main(cfg: DictConfig):
             self.leader = PersonaIdentity("Diana", "Diana")
             # Followers
             self.followers = [
-                PersonaIdentity("Frank", "Frank"),
-                PersonaIdentity("Grace", "Grace")
+                PersonaIdentity("Follower1", "Folllower1"),
+                PersonaIdentity("Follower2", "Folllower2"),
+                PersonaIdentity("Follower3", "Folllower3"),
+                PersonaIdentity("Follower4", "Folllower4")
             ]
 
         def get_args_iterator(self):
@@ -480,7 +484,7 @@ def main(cfg: DictConfig):
             if remainder < 0:
                 remainder = 0
             
-            new_lake = remainder*2
+            new_lake = np.random.randint(10, 101)
             self.current_lake = new_lake
 
             # Combine HTML
@@ -614,8 +618,11 @@ def main(cfg: DictConfig):
             self.leader = PersonaIdentity("Alexander", "Alexander")
             # Different followers
             self.followers = [
-                PersonaIdentity("Henry", "Henry"),
-                PersonaIdentity("Isabella", "Isabella")
+                PersonaIdentity("Follower1", "Folllower1"),
+                PersonaIdentity("Follower2", "Folllower2"),
+                PersonaIdentity("Follower3", "Folllower3"),
+                PersonaIdentity("Follower4", "Folllower4")
+                
             ]
 
         def prompt(self, **kwargs):
@@ -661,7 +668,7 @@ def main(cfg: DictConfig):
             if remainder < 0:
                 remainder = 0
             
-            new_lake = remainder*2
+            new_lake = np.random.randint(10, 101)
             self.current_lake = new_lake
 
             all_html = html_leader + "\n" + "\n".join(html_followers)
@@ -698,4 +705,4 @@ Wrote results to /content/GovSim/subskills/fishing/./results/subskills_check_v7.
  67% 2/3 [02:49<01:17, 77.49s/it] Lake depleted at iteration 1. Ending scenario.
 Wrote results to /content/GovSim/subskills/fishing/./results/subskills_check_v7.0/feasible-moon-68/autocratic_leader_stateful.json
 100% 3/3 [03:16<00:00, 65.54s/it]
-''''
+'''

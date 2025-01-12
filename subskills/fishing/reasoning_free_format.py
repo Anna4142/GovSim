@@ -492,7 +492,7 @@ def prompt_leader_decision(
     with user():
         
        
-        lm += f""" "Three fishermen fish in a lake."
+        lm += f""" "Five fishermen fish in a lake."
         " The lake's maximum fish population is 100 tons."
         " At the beginning of each month, each fisherman chooses to take between 0 and 100 tons of fish, and that amount is then removed from the lake."
         f" At the end of the month, the remaining fish reproduce and double in population, up to the maximum population. This month, there are {num_tons_lake} tons of fish in the lake."""
@@ -685,7 +685,7 @@ def prompt_leader_democratic_decision(
     with user():
         
        
-        lm += f""" "Three fishermen fish in a lake."
+        lm += f""" "Five fishermen fish in a lake."
         " The lake's maximum fish population is 100 tons."
         " At the beginning of each month, each fisherman chooses to take between 0 and 100 tons of fish, and that amount is then removed from the lake."
         f" At the end of the month, the remaining fish reproduce and double in population, up to the maximum population. This month, there are {num_tons_lake} tons of fish in the lake."""
@@ -750,7 +750,7 @@ def prompt_leader_autocratic_decision(
     with user():
         
        
-        lm += f""" "Three fishermen fish in a lake."
+        lm += f""" "Five fishermen fish in a lake."
         " The lake's maximum fish population is 100 tons."
         " At the beginning of each month, each fisherman chooses to take between 0 and 100 tons of fish, and that amount is then removed from the lake."
         f" At the end of the month, the remaining fish reproduce and double in population, up to the maximum population. This month, there are {num_tons_lake} tons of fish in the lake."""

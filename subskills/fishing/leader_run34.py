@@ -697,7 +697,7 @@ def main(cfg: DictConfig):
     # -------------------------------------------------------------------
     
     test_cases = [
-    LeaderFollower_TestMechanism(),
+    #LeaderFollower_TestMechanism(),
     DemocraticLeader_TestMechanism(),
     AutocraticLeader_TestMechanism()
 ]

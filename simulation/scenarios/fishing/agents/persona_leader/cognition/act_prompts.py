@@ -38,13 +38,29 @@ def prompt_action_choose_amount_of_fish_to_catch(
         2. Current fish population: {interval[0]}-{interval[-1]} tons
         3. Other fishermen's likely behavior
         4. Long-term population dynamics
-        5. Impact of your decision on group behavior
+        5. Impact of your decision on group behavior"""
         
-        Calculate optimal catch amount that:
-        - Ensures sustainable fishing levels
-        - Sets a good example for others
-        - Maximizes long-term group benefit
-        - Demonstrates clear reasoning
-
-        Show detailed mathematical calculations and reasoning steps."""
+       
         lm += reasoning_steps_prompt()
+        lm += ' Put the final answer after "Answer:", example Answer: N tons.'
+
+    with assistant():
+        lm = model.gen(
+            lm,
+            "reasoning",
+            stop_regex=r"Answer:|So, the answer is:|\*\*Answer\*\*:",
+            save_stop_text=True,
+        )
+        lm = model.find(
+            lm,
+            regex=r"\d+",
+            default_value="0",
+            stop_regex=f"tons",
+            name="option",
+        )
+        option = int(lm["option"])
+        reasoning = lm["reasoning"]
+
+    model.end_chain(identity.name, lm)
+
+    return option, lm.html()

@@ -119,7 +119,7 @@ def get_sytem_prompt(persona):
 
 
 def get_sytem_prompt_v1(persona):
-    persona_names = ["John", "Kate", "Jack", "Emma", "Luke"]
+    persona_names = ["Leader","Kate", "Jack", "Emma", "Luke"]
     persona_names.remove(persona.name)
     list_string_persona_name = ", ".join(persona_names)
     text = (
@@ -142,7 +142,7 @@ def get_sytem_prompt_v1(persona):
 
 
 def get_sytem_prompt_v3(persona):
-    persona_names = ["John", "Kate", "Jack", "Emma", "Luke"]
+    persona_names = ["Leader", "Kate", "Jack", "Emma", "Luke"]
     persona_names.remove(persona.name)
     list_string_persona_name = ", ".join(persona_names)
     text = (
@@ -165,7 +165,7 @@ def get_sytem_prompt_v3(persona):
 
 
 def get_sytem_prompt_v3_nocom(persona):
-    persona_names = ["John", "Kate", "Jack", "Emma", "Luke"]
+    persona_names = [ "Leader","Kate", "Jack", "Emma", "Luke"]
     persona_names.remove(persona.name)
     list_string_persona_name = ", ".join(persona_names)
     text = (

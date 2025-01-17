@@ -40,9 +40,17 @@ def run(
     # Create personas with leader as persona_0
     personas = {}
     for i in range(5):
-        if i == 0 and cfg.personas.persona_0.name == "Leader":
+        if i == 0 :
             # Use LeaderPersona for persona_0 if it's configured as leader
-            personas[f"persona_{i}"] = LeaderPersona(
+            personas[f"persona_{i}"] = LeaderPersonaClear(
+                cfg.agent,
+                wrapper,
+                embedding_model,
+                os.path.join(experiment_storage, f"persona_{i}"),
+            )
+        elif   i == 1:
+            # Use LeaderPersona for persona_0 if it's configured as leader
+            personas[f"persona_{i}"] = LeaderPersonaGobbled(
                 cfg.agent,
                 wrapper,
                 embedding_model,

@@ -57,3 +57,43 @@ def prompt_action_choose_amount_of_fish_to_catch(
     model.end_chain(identity.name, lm)
 
     return option, lm.html()
+def prompt_election_vote(
+    model: ModelWandbWrapper,
+    identity: PersonaIdentity,
+    memories: list[str],
+    current_location: str,
+    current_time: datetime,
+    candidates: List[str],
+    issues: Dict[str, str],
+) -> Tuple[str, str]:
+    lm = model.start_chain(identity.name, "fishing_election", "vote_decision")
+
+    with user():
+        lm += f"{get_sytem_prompt(identity)}\n"
+        lm += location_time_info(current_location, current_time)
+        lm += memory_prompt(identity, memories)
+        lm += f"\nTask: Based on fishing policies, who would you vote for: {', '.join(candidates)}?"
+        lm += f"\nCandidate positions:\n"
+        for candidate, position in issues.items():
+            lm += f"- {candidate}: {position}\n"
+        lm += reasoning_steps_prompt()
+        lm += ' Put final answer after "Vote:", example Vote: Candidate Name'
+
+    with assistant():
+        lm = model.gen(
+            lm,
+            "reasoning",
+            stop_regex=r"Vote:|So, the vote is:",
+            save_stop_text=True,
+        )
+        vote = model.find(
+            lm,
+            regex=r"[A-Za-z\s]+",
+            default_value="",
+            stop_regex=r"\n",
+            name="vote"
+        )
+        reasoning = lm["reasoning"]
+
+    model.end_chain(identity.name, lm)
+    return vote.strip(), lm.html()

@@ -122,3 +122,36 @@ def prompt_summarize_conversation_in_one_sentence(
 
     model.end_chain("framework", lm)
     return summary, lm.html()
+def prompt_leader_agenda(
+   model: ModelWandbWrapper,
+   init_persona: PersonaIdentity, 
+   init_retrieved_memory: list[str],
+   current_location: str,
+   current_time: datetime
+) -> tuple[str, str]:
+   lm = model.start_chain(init_persona.name, "leader_agenda", "get_agenda")
+
+   with user():
+       lm += f"{get_sytem_prompt(init_persona)}\n"
+       lm += location_time_info(current_location, current_time)
+       lm += memory_prompt(init_persona, init_retrieved_memory)
+       lm += "\nTask: As a candidate for fishing community leader, declare your agenda and policy for managing the fishing resources. Include:\n"
+       lm += "1. Your principles for sustainable fishing\n"
+       lm += "2. How you will allocate fishing quotas\n" 
+       lm += "3. Your enforcement approach\n"
+       lm += reasoning_steps_prompt()
+       lm += 'Put the final agenda after "Agenda:"'
+
+   with assistant():
+       lm = model.gen(
+           lm,
+           "reasoning",
+           stop_regex=r"Agenda:|So, the agenda is:",
+           save_stop_text=True,
+       )
+       agenda = lm["reasoning"].strip()
+       if agenda[0] == '"' and agenda[-1] == '"':
+           agenda = agenda[1:-1]
+
+   model.end_chain(init_persona.name, lm)
+   return agenda, lm.html()

@@ -4,7 +4,7 @@ from simulation.persona.cognition.act import ActComponent
 from simulation.utils import ModelWandbWrapper
 from pathfinder import assistant, system, user
 
-from .act_prompts import prompt_action_choose_amount_of_fish_to_catch
+from .act_prompts import prompt_action_choose_amount_of_fish_to_catch,prompt_election_vote
 from .utils import get_universalization_prompt
 
 
@@ -43,3 +43,26 @@ class FishingActComponent(ActComponent):
         )
         res = int(res)
         return res, [html]
+class ElectionComponent:
+   def __init__(self, model: ModelWandbWrapper, cfg):
+       self.model = model
+       self.cfg = cfg
+   
+   def process_vote(
+       self,
+       identity: PersonaIdentity,
+       memories: List[str], 
+       current_location: str,
+       current_time: datetime,
+       candidates: List[str],
+       issues: Dict[str, str]
+   ) -> Tuple[str, str]:
+       return prompt_election_vote(
+           self.model,
+           identity,
+           memories,
+           current_location,
+           current_time,
+           candidates,
+           issues
+       )

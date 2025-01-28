@@ -60,6 +60,4 @@ agent:
     expiration_delta:
       days: 63
 
-  store:
-    expiration_delta:
-      days: 63
+ 

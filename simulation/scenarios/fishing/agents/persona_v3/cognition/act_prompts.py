@@ -3,7 +3,8 @@ from datetime import datetime
 from simulation.persona.common import PersonaIdentity
 from simulation.utils import ModelWandbWrapper
 from pathfinder import assistant, system, user
-
+from typing import List
+from typing import List, Dict,Tuple
 from .utils import (
     consider_identity_persona_prompt,
     conversation_to_string_with_dash,

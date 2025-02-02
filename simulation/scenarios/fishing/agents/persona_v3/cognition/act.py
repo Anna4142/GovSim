@@ -7,6 +7,7 @@ from pathfinder import assistant, system, user
 from .act_prompts import prompt_action_choose_amount_of_fish_to_catch,prompt_election_vote
 from .utils import get_universalization_prompt
 
+from typing import List, Dict,Tuple
 
 class FishingActComponent(ActComponent):
     """
@@ -50,7 +51,7 @@ class ElectionComponent:
    
    def process_vote(
        self,
-       identity: PersonaIdentity,
+      
        memories: List[str], 
        current_location: str,
        current_time: datetime,

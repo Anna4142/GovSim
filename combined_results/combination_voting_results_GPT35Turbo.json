@@ -1,0 +1,522 @@
+[
+  {
+    "api_key_name": "GPT 3.5(Turbo)",
+    "leader_1_variant": "basic",
+    "leader_2_variant": "basic",
+    "voting_mechanism": "basic",
+    "mechanism_type": "per_voter",
+    "agendas": {
+      "Leader1": "My agenda for managing the fishing resources focuses on implementing sustainable fishing practices to maintain the ecological balance, including setting appropriate fishing limits, promoting catch and release programs. Moreover, I aim to ensure transparent communication with the local community about these initiatives and the importance of preserving our fishing lake for future generations.",
+      "Leader2": "My agenda is to implement strict regulations on fishing, allowing only a certain tonnage to be caught per day to maintain the sustainability of the lake's resources. Regular inspections will be conducted, and severe penalties will be enforced for those who overfish or fail to comply with the regulations."
+    },
+    "votes": {
+      "Leader1": 3
+    },
+    "vote_details": {
+      "Voter0": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter1": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter2": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      }
+    },
+    "winner": "Leader1"
+  },
+  {
+    "api_key_name": "GPT 3.5(Turbo)",
+    "leader_1_variant": "basic",
+    "leader_2_variant": "basic",
+    "voting_mechanism": "approval",
+    "mechanism_type": "per_voter",
+    "agendas": {
+      "Leader1": "My agenda for managing the fishing resources focuses on implementing sustainable fishing practices to maintain the ecological balance, including setting appropriate fishing limits, promoting catch and release programs. Moreover, I aim to ensure transparent communication with the local community about these initiatives and the importance of preserving our fishing lake for future generations.",
+      "Leader2": "My agenda is to implement strict regulations on fishing, allowing only a certain tonnage to be caught per day to maintain the sustainability of the lake's resources. Regular inspections will be conducted, and severe penalties will be enforced for those who overfish or fail to comply with the regulations."
+    },
+    "votes": {
+      "Leader1": 3
+    },
+    "vote_details": {
+      "Voter0": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter1": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter2": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      }
+    },
+    "winner": "Leader1"
+  },
+  {
+    "api_key_name": "GPT 3.5(Turbo)",
+    "leader_1_variant": "basic",
+    "leader_2_variant": "basic",
+    "voting_mechanism": "ranked_choice",
+    "mechanism_type": "per_voter",
+    "agendas": {
+      "Leader1": "My agenda for managing the fishing resources focuses on implementing sustainable fishing practices to maintain the ecological balance, including setting appropriate fishing limits, promoting catch and release programs. Moreover, I aim to ensure transparent communication with the local community about these initiatives and the importance of preserving our fishing lake for future generations.",
+      "Leader2": "My agenda is to implement strict regulations on fishing, allowing only a certain tonnage to be caught per day to maintain the sustainability of the lake's resources. Regular inspections will be conducted, and severe penalties will be enforced for those who overfish or fail to comply with the regulations."
+    },
+    "votes": {
+      "Leader1": 3
+    },
+    "vote_details": {
+      "Voter0": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter1": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter2": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      }
+    },
+    "winner": "Leader1"
+  },
+  {
+    "api_key_name": "GPT 3.5(Turbo)",
+    "leader_1_variant": "basic",
+    "leader_2_variant": "basic",
+    "voting_mechanism": "borda",
+    "mechanism_type": "per_voter",
+    "agendas": {
+      "Leader1": "My agenda for managing the fishing resources focuses on implementing sustainable fishing practices to maintain the ecological balance, including setting appropriate fishing limits, promoting catch and release programs. Moreover, I aim to ensure transparent communication with the local community about these initiatives and the importance of preserving our fishing lake for future generations.",
+      "Leader2": "My agenda is to implement strict regulations on fishing, allowing only a certain tonnage to be caught per day to maintain the sustainability of the lake's resources. Regular inspections will be conducted, and severe penalties will be enforced for those who overfish or fail to comply with the regulations."
+    },
+    "votes": {
+      "Leader1": 3
+    },
+    "vote_details": {
+      "Voter0": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter1": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter2": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      }
+    },
+    "winner": "Leader1"
+  },
+  {
+    "api_key_name": "GPT 3.5(Turbo)",
+    "leader_1_variant": "basic",
+    "leader_2_variant": "detailed",
+    "voting_mechanism": "basic",
+    "mechanism_type": "per_voter",
+    "agendas": {
+      "Leader1": "My agenda would focus on implementing strict regulations that ensure sustainable fishing practices, protecting the fish population from overfishing. Additionally, I will ensure regular, transparent communication with the local community about the state of the lake's resources and any changes in regulations, promoting their active participation in maintaining the lake's health.",
+      "Leader2": "Agenda 1: Implement a stringent quota system, limiting each registered fishing entity to a specific amount of catch, to ensure fair distribution and prevent overfishing. \n\nAgenda 2: Introduce a strict licensing requirement for all fishermen and fishing companies, ensuring each participant's adherence to the rules. \n\nAgenda 3: Employ modern technologies such as GPS tracking and electronic reporting systems to monitor fishing activities, ensuring full compliance and immediate penalty for violations. \n\nAgenda 4: Establish a regular schedule for reviewing and adjusting the fishing quota based on the health and sustainability of the fish population, ensuring long-term viability of the fishing lake."
+    },
+    "votes": {
+      "Leader2": 3
+    },
+    "vote_details": {
+      "Voter0": {
+        "vote": "Leader2",
+        "response": "Leader2"
+      },
+      "Voter1": {
+        "vote": "Leader2",
+        "response": "Leader2"
+      },
+      "Voter2": {
+        "vote": "Leader2",
+        "response": "Leader2"
+      }
+    },
+    "winner": "Leader2"
+  },
+  {
+    "api_key_name": "GPT 3.5(Turbo)",
+    "leader_1_variant": "basic",
+    "leader_2_variant": "detailed",
+    "voting_mechanism": "approval",
+    "mechanism_type": "per_voter",
+    "agendas": {
+      "Leader1": "My agenda would focus on implementing strict regulations that ensure sustainable fishing practices, protecting the fish population from overfishing. Additionally, I will ensure regular, transparent communication with the local community about the state of the lake's resources and any changes in regulations, promoting their active participation in maintaining the lake's health.",
+      "Leader2": "Agenda 1: Implement a stringent quota system, limiting each registered fishing entity to a specific amount of catch, to ensure fair distribution and prevent overfishing. \n\nAgenda 2: Introduce a strict licensing requirement for all fishermen and fishing companies, ensuring each participant's adherence to the rules. \n\nAgenda 3: Employ modern technologies such as GPS tracking and electronic reporting systems to monitor fishing activities, ensuring full compliance and immediate penalty for violations. \n\nAgenda 4: Establish a regular schedule for reviewing and adjusting the fishing quota based on the health and sustainability of the fish population, ensuring long-term viability of the fishing lake."
+    },
+    "votes": {
+      "Leader1": 3
+    },
+    "vote_details": {
+      "Voter0": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter1": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter2": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      }
+    },
+    "winner": "Leader1"
+  },
+  {
+    "api_key_name": "GPT 3.5(Turbo)",
+    "leader_1_variant": "basic",
+    "leader_2_variant": "detailed",
+    "voting_mechanism": "ranked_choice",
+    "mechanism_type": "per_voter",
+    "agendas": {
+      "Leader1": "My agenda would focus on implementing strict regulations that ensure sustainable fishing practices, protecting the fish population from overfishing. Additionally, I will ensure regular, transparent communication with the local community about the state of the lake's resources and any changes in regulations, promoting their active participation in maintaining the lake's health.",
+      "Leader2": "Agenda 1: Implement a stringent quota system, limiting each registered fishing entity to a specific amount of catch, to ensure fair distribution and prevent overfishing. \n\nAgenda 2: Introduce a strict licensing requirement for all fishermen and fishing companies, ensuring each participant's adherence to the rules. \n\nAgenda 3: Employ modern technologies such as GPS tracking and electronic reporting systems to monitor fishing activities, ensuring full compliance and immediate penalty for violations. \n\nAgenda 4: Establish a regular schedule for reviewing and adjusting the fishing quota based on the health and sustainability of the fish population, ensuring long-term viability of the fishing lake."
+    },
+    "votes": {
+      "Leader2": 3
+    },
+    "vote_details": {
+      "Voter0": {
+        "vote": "Leader2",
+        "response": "Leader2"
+      },
+      "Voter1": {
+        "vote": "Leader2",
+        "response": "Leader2"
+      },
+      "Voter2": {
+        "vote": "Leader2",
+        "response": "Leader2"
+      }
+    },
+    "winner": "Leader2"
+  },
+  {
+    "api_key_name": "GPT 3.5(Turbo)",
+    "leader_1_variant": "basic",
+    "leader_2_variant": "detailed",
+    "voting_mechanism": "borda",
+    "mechanism_type": "per_voter",
+    "agendas": {
+      "Leader1": "My agenda would focus on implementing strict regulations that ensure sustainable fishing practices, protecting the fish population from overfishing. Additionally, I will ensure regular, transparent communication with the local community about the state of the lake's resources and any changes in regulations, promoting their active participation in maintaining the lake's health.",
+      "Leader2": "Agenda 1: Implement a stringent quota system, limiting each registered fishing entity to a specific amount of catch, to ensure fair distribution and prevent overfishing. \n\nAgenda 2: Introduce a strict licensing requirement for all fishermen and fishing companies, ensuring each participant's adherence to the rules. \n\nAgenda 3: Employ modern technologies such as GPS tracking and electronic reporting systems to monitor fishing activities, ensuring full compliance and immediate penalty for violations. \n\nAgenda 4: Establish a regular schedule for reviewing and adjusting the fishing quota based on the health and sustainability of the fish population, ensuring long-term viability of the fishing lake."
+    },
+    "votes": {
+      "Leader2": 3
+    },
+    "vote_details": {
+      "Voter0": {
+        "vote": "Leader2",
+        "response": "Leader2"
+      },
+      "Voter1": {
+        "vote": "Leader2",
+        "response": "Leader2"
+      },
+      "Voter2": {
+        "vote": "Leader2",
+        "response": "Leader2"
+      }
+    },
+    "winner": "Leader2"
+  },
+  {
+    "api_key_name": "GPT 3.5(Turbo)",
+    "leader_1_variant": "detailed",
+    "leader_2_variant": "basic",
+    "voting_mechanism": "basic",
+    "mechanism_type": "per_voter",
+    "agendas": {
+      "Leader1": "1. Implement a Sustainable Fishing Plan: Create a comprehensive plan that sets limits on the amount of fish that can be caught each season to ensure the fish population can regenerate. \n\n2. Establish a Community Fishing Council: Form a council made up of local fishermen and other community members to oversee the implementation of the sustainable fishing plan, fostering a sense of ownership and responsibility.\n\n3. Promote Education and Awareness: Develop and promote educational programs about the importance of sustainable fishing practices. Encourage community participation in workshops, seminars, and clean-up activities to increase awareness and involvement.\n\n4. Regular Monitoring and Assessment: Carry out regular assessments of the fish population to ensure its health and sustainability. Adjust fishing limits and strategies as necessary based on these assessments.",
+      "Leader2": "My agenda is to implement strict fishing quotas, allowing only a sustainable amount of fish to be caught annually to prevent overfishing. I will also enforce strict penalties for those who do not adhere to these regulations, ensuring the longevity and preservation of our fishing resources."
+    },
+    "votes": {
+      "Leader1": 3
+    },
+    "vote_details": {
+      "Voter0": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter1": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter2": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      }
+    },
+    "winner": "Leader1"
+  },
+  {
+    "api_key_name": "GPT 3.5(Turbo)",
+    "leader_1_variant": "detailed",
+    "leader_2_variant": "basic",
+    "voting_mechanism": "approval",
+    "mechanism_type": "per_voter",
+    "agendas": {
+      "Leader1": "1. Implement a Sustainable Fishing Plan: Create a comprehensive plan that sets limits on the amount of fish that can be caught each season to ensure the fish population can regenerate. \n\n2. Establish a Community Fishing Council: Form a council made up of local fishermen and other community members to oversee the implementation of the sustainable fishing plan, fostering a sense of ownership and responsibility.\n\n3. Promote Education and Awareness: Develop and promote educational programs about the importance of sustainable fishing practices. Encourage community participation in workshops, seminars, and clean-up activities to increase awareness and involvement.\n\n4. Regular Monitoring and Assessment: Carry out regular assessments of the fish population to ensure its health and sustainability. Adjust fishing limits and strategies as necessary based on these assessments.",
+      "Leader2": "My agenda is to implement strict fishing quotas, allowing only a sustainable amount of fish to be caught annually to prevent overfishing. I will also enforce strict penalties for those who do not adhere to these regulations, ensuring the longevity and preservation of our fishing resources."
+    },
+    "votes": {
+      "Leader1": 3
+    },
+    "vote_details": {
+      "Voter0": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter1": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter2": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      }
+    },
+    "winner": "Leader1"
+  },
+  {
+    "api_key_name": "GPT 3.5(Turbo)",
+    "leader_1_variant": "detailed",
+    "leader_2_variant": "basic",
+    "voting_mechanism": "ranked_choice",
+    "mechanism_type": "per_voter",
+    "agendas": {
+      "Leader1": "1. Implement a Sustainable Fishing Plan: Create a comprehensive plan that sets limits on the amount of fish that can be caught each season to ensure the fish population can regenerate. \n\n2. Establish a Community Fishing Council: Form a council made up of local fishermen and other community members to oversee the implementation of the sustainable fishing plan, fostering a sense of ownership and responsibility.\n\n3. Promote Education and Awareness: Develop and promote educational programs about the importance of sustainable fishing practices. Encourage community participation in workshops, seminars, and clean-up activities to increase awareness and involvement.\n\n4. Regular Monitoring and Assessment: Carry out regular assessments of the fish population to ensure its health and sustainability. Adjust fishing limits and strategies as necessary based on these assessments.",
+      "Leader2": "My agenda is to implement strict fishing quotas, allowing only a sustainable amount of fish to be caught annually to prevent overfishing. I will also enforce strict penalties for those who do not adhere to these regulations, ensuring the longevity and preservation of our fishing resources."
+    },
+    "votes": {
+      "Leader1": 3
+    },
+    "vote_details": {
+      "Voter0": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter1": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter2": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      }
+    },
+    "winner": "Leader1"
+  },
+  {
+    "api_key_name": "GPT 3.5(Turbo)",
+    "leader_1_variant": "detailed",
+    "leader_2_variant": "basic",
+    "voting_mechanism": "borda",
+    "mechanism_type": "per_voter",
+    "agendas": {
+      "Leader1": "1. Implement a Sustainable Fishing Plan: Create a comprehensive plan that sets limits on the amount of fish that can be caught each season to ensure the fish population can regenerate. \n\n2. Establish a Community Fishing Council: Form a council made up of local fishermen and other community members to oversee the implementation of the sustainable fishing plan, fostering a sense of ownership and responsibility.\n\n3. Promote Education and Awareness: Develop and promote educational programs about the importance of sustainable fishing practices. Encourage community participation in workshops, seminars, and clean-up activities to increase awareness and involvement.\n\n4. Regular Monitoring and Assessment: Carry out regular assessments of the fish population to ensure its health and sustainability. Adjust fishing limits and strategies as necessary based on these assessments.",
+      "Leader2": "My agenda is to implement strict fishing quotas, allowing only a sustainable amount of fish to be caught annually to prevent overfishing. I will also enforce strict penalties for those who do not adhere to these regulations, ensuring the longevity and preservation of our fishing resources."
+    },
+    "votes": {
+      "Leader1": 3
+    },
+    "vote_details": {
+      "Voter0": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter1": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter2": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      }
+    },
+    "winner": "Leader1"
+  },
+  {
+    "api_key_name": "GPT 3.5(Turbo)",
+    "leader_1_variant": "detailed",
+    "leader_2_variant": "detailed",
+    "voting_mechanism": "basic",
+    "mechanism_type": "per_voter",
+    "agendas": {
+      "Leader1": "Agenda:\n\n1. Introduction of Sustainable Fishing Practices: Implement a detailed plan that educates and encourages the local fishing community about sustainable fishing practices. This includes promoting selective fishing gear to reduce bycatch and establishing seasonal fishing schedules to allow fish populations to replenish.\n\n2. Community Engagement and Education: Schedule regular community meetings and workshops to involve locals in decision-making processes, educating them about the importance of maintaining the lake's ecosystem and their role in achieving it. Create a platform for sharing knowledge and experiences related to fishing.\n\n3. Monitoring and Enforcement: Establish a local monitoring system that ensures rules and regulations are adhered to. This includes consistent measurement of fish populations and strict enforcement of penalties for overfishing or harmful fishing practices.\n\n4. Development of Alternative Livelihoods: Develop programs that provide alternative income opportunities for the community during off-peak fishing seasons, reducing dependency on fishing and pressure on the lake's resources. \n\n5. Regular Review and Improvement: Conduct regular reviews of the management strategies to assess",
+      "Leader2": "1. Implement Strict Regulations: Initiate stringent fishing laws that dictate the specific quantity of fish that can be caught daily/seasonally, thus ensuring that the fish population is not over-exploited. Violation of these laws will result in severe penalties, including heavy fines or revocation of fishing licenses.\n\n2. Establish Monitoring and Surveillance Systems: Develop a comprehensive monitoring and surveillance program to ensure that all fishing activities within the lake are compliant with the established regulations. This will involve regular patrols and unannounced inspections, utilizing technologies like GPS tracking and drone surveillance.\n\n3. Promote Sustainable Fishing Practices: Engage with the local fishing community to educate them about the importance of sustainable fishing practices. This could include initiatives such as the use of environmentally friendly fishing gear and techniques that minimize by-catch.\n\n4. Enforcement of Replenishment Measures: Implement mandatory fish restocking programs where a percentage of the catch must be bred in hatcheries and then released back into the lake to sustain a healthy fish population."
+    },
+    "votes": {
+      "Leader1": 3
+    },
+    "vote_details": {
+      "Voter0": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter1": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter2": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      }
+    },
+    "winner": "Leader1"
+  },
+  {
+    "api_key_name": "GPT 3.5(Turbo)",
+    "leader_1_variant": "detailed",
+    "leader_2_variant": "detailed",
+    "voting_mechanism": "approval",
+    "mechanism_type": "per_voter",
+    "agendas": {
+      "Leader1": "Agenda:\n\n1. Introduction of Sustainable Fishing Practices: Implement a detailed plan that educates and encourages the local fishing community about sustainable fishing practices. This includes promoting selective fishing gear to reduce bycatch and establishing seasonal fishing schedules to allow fish populations to replenish.\n\n2. Community Engagement and Education: Schedule regular community meetings and workshops to involve locals in decision-making processes, educating them about the importance of maintaining the lake's ecosystem and their role in achieving it. Create a platform for sharing knowledge and experiences related to fishing.\n\n3. Monitoring and Enforcement: Establish a local monitoring system that ensures rules and regulations are adhered to. This includes consistent measurement of fish populations and strict enforcement of penalties for overfishing or harmful fishing practices.\n\n4. Development of Alternative Livelihoods: Develop programs that provide alternative income opportunities for the community during off-peak fishing seasons, reducing dependency on fishing and pressure on the lake's resources. \n\n5. Regular Review and Improvement: Conduct regular reviews of the management strategies to assess",
+      "Leader2": "1. Implement Strict Regulations: Initiate stringent fishing laws that dictate the specific quantity of fish that can be caught daily/seasonally, thus ensuring that the fish population is not over-exploited. Violation of these laws will result in severe penalties, including heavy fines or revocation of fishing licenses.\n\n2. Establish Monitoring and Surveillance Systems: Develop a comprehensive monitoring and surveillance program to ensure that all fishing activities within the lake are compliant with the established regulations. This will involve regular patrols and unannounced inspections, utilizing technologies like GPS tracking and drone surveillance.\n\n3. Promote Sustainable Fishing Practices: Engage with the local fishing community to educate them about the importance of sustainable fishing practices. This could include initiatives such as the use of environmentally friendly fishing gear and techniques that minimize by-catch.\n\n4. Enforcement of Replenishment Measures: Implement mandatory fish restocking programs where a percentage of the catch must be bred in hatcheries and then released back into the lake to sustain a healthy fish population."
+    },
+    "votes": {
+      "Leader1": 3
+    },
+    "vote_details": {
+      "Voter0": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter1": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter2": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      }
+    },
+    "winner": "Leader1"
+  },
+  {
+    "api_key_name": "GPT 3.5(Turbo)",
+    "leader_1_variant": "detailed",
+    "leader_2_variant": "detailed",
+    "voting_mechanism": "ranked_choice",
+    "mechanism_type": "per_voter",
+    "agendas": {
+      "Leader1": "Agenda:\n\n1. Introduction of Sustainable Fishing Practices: Implement a detailed plan that educates and encourages the local fishing community about sustainable fishing practices. This includes promoting selective fishing gear to reduce bycatch and establishing seasonal fishing schedules to allow fish populations to replenish.\n\n2. Community Engagement and Education: Schedule regular community meetings and workshops to involve locals in decision-making processes, educating them about the importance of maintaining the lake's ecosystem and their role in achieving it. Create a platform for sharing knowledge and experiences related to fishing.\n\n3. Monitoring and Enforcement: Establish a local monitoring system that ensures rules and regulations are adhered to. This includes consistent measurement of fish populations and strict enforcement of penalties for overfishing or harmful fishing practices.\n\n4. Development of Alternative Livelihoods: Develop programs that provide alternative income opportunities for the community during off-peak fishing seasons, reducing dependency on fishing and pressure on the lake's resources. \n\n5. Regular Review and Improvement: Conduct regular reviews of the management strategies to assess",
+      "Leader2": "1. Implement Strict Regulations: Initiate stringent fishing laws that dictate the specific quantity of fish that can be caught daily/seasonally, thus ensuring that the fish population is not over-exploited. Violation of these laws will result in severe penalties, including heavy fines or revocation of fishing licenses.\n\n2. Establish Monitoring and Surveillance Systems: Develop a comprehensive monitoring and surveillance program to ensure that all fishing activities within the lake are compliant with the established regulations. This will involve regular patrols and unannounced inspections, utilizing technologies like GPS tracking and drone surveillance.\n\n3. Promote Sustainable Fishing Practices: Engage with the local fishing community to educate them about the importance of sustainable fishing practices. This could include initiatives such as the use of environmentally friendly fishing gear and techniques that minimize by-catch.\n\n4. Enforcement of Replenishment Measures: Implement mandatory fish restocking programs where a percentage of the catch must be bred in hatcheries and then released back into the lake to sustain a healthy fish population."
+    },
+    "votes": {
+      "Leader1": 3
+    },
+    "vote_details": {
+      "Voter0": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter1": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter2": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      }
+    },
+    "winner": "Leader1"
+  },
+  {
+    "api_key_name": "GPT 3.5(Turbo)",
+    "leader_1_variant": "detailed",
+    "leader_2_variant": "detailed",
+    "voting_mechanism": "borda",
+    "mechanism_type": "per_voter",
+    "agendas": {
+      "Leader1": "Agenda:\n\n1. Introduction of Sustainable Fishing Practices: Implement a detailed plan that educates and encourages the local fishing community about sustainable fishing practices. This includes promoting selective fishing gear to reduce bycatch and establishing seasonal fishing schedules to allow fish populations to replenish.\n\n2. Community Engagement and Education: Schedule regular community meetings and workshops to involve locals in decision-making processes, educating them about the importance of maintaining the lake's ecosystem and their role in achieving it. Create a platform for sharing knowledge and experiences related to fishing.\n\n3. Monitoring and Enforcement: Establish a local monitoring system that ensures rules and regulations are adhered to. This includes consistent measurement of fish populations and strict enforcement of penalties for overfishing or harmful fishing practices.\n\n4. Development of Alternative Livelihoods: Develop programs that provide alternative income opportunities for the community during off-peak fishing seasons, reducing dependency on fishing and pressure on the lake's resources. \n\n5. Regular Review and Improvement: Conduct regular reviews of the management strategies to assess",
+      "Leader2": "1. Implement Strict Regulations: Initiate stringent fishing laws that dictate the specific quantity of fish that can be caught daily/seasonally, thus ensuring that the fish population is not over-exploited. Violation of these laws will result in severe penalties, including heavy fines or revocation of fishing licenses.\n\n2. Establish Monitoring and Surveillance Systems: Develop a comprehensive monitoring and surveillance program to ensure that all fishing activities within the lake are compliant with the established regulations. This will involve regular patrols and unannounced inspections, utilizing technologies like GPS tracking and drone surveillance.\n\n3. Promote Sustainable Fishing Practices: Engage with the local fishing community to educate them about the importance of sustainable fishing practices. This could include initiatives such as the use of environmentally friendly fishing gear and techniques that minimize by-catch.\n\n4. Enforcement of Replenishment Measures: Implement mandatory fish restocking programs where a percentage of the catch must be bred in hatcheries and then released back into the lake to sustain a healthy fish population."
+    },
+    "votes": {
+      "Leader1": 3
+    },
+    "vote_details": {
+      "Voter0": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter1": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      },
+      "Voter2": {
+        "vote": "Leader1",
+        "response": "Leader1"
+      }
+    },
+    "winner": "Leader1"
+  },
+  {
+    "api_key_name": "GPT 3.5(Turbo)",
+    "leader_1_variant": "basic",
+    "leader_2_variant": "basic",
+    "voting_mechanism": "runoff",
+    "mechanism_type": "runoff",
+    "agendas": {
+      "Leader1": "My agenda will prioritize the establishment of sustainable fishing practices to maintain the balance of the ecosystem, including setting reasonable catch limits and implementing seasonal restrictions. I will also ensure constant communication and engagement with the local community, policymakers, and other stakeholders to promote awareness and collective responsibility in preserving our fishing resources.",
+      "Leader2": "My agenda would enforce stringent regulations on fishing, setting strict quotas to ensure sustainable harvesting and long-term viability of the fish population. Regular monitoring and severe penalties for overfishing will be implemented, along with the promotion of responsible and ethical fishing practices."
+    },
+    "votes": null,
+    "vote_details": null,
+    "winner": "Leader1"
+  },
+  {
+    "api_key_name": "GPT 3.5(Turbo)",
+    "leader_1_variant": "basic",
+    "leader_2_variant": "detailed",
+    "voting_mechanism": "runoff",
+    "mechanism_type": "runoff",
+    "agendas": {
+      "Leader1": "My agenda for managing the fishing resources is to implement strict regulations on overfishing, ensuring a sustainable and healthy ecosystem within the lake. I aim to foster transparency through regular updates on the state of the lake's resources and engage the community in conservation efforts to maintain the balance of our precious aquatic life.",
+      "Leader2": "Agenda:\n\n1. Establish Strict Fishing Quotas: Implement a strict quota system that allows only a sustainable amount of fish to be caught annually, ensuring the lake's fish population remains stable. \n\n2. Intense Surveillance and Inspection: Deploy rigorous monitoring and inspection mechanisms on all fishing activities to enforce adherence to the quotas and prevent overfishing.\n\n3. Heavy Penalties for Violations: Enforce heavy fines and penalties for any violations of the quotas, including suspension or revocation of fishing licenses.\n\n4. Periodic Resource Assessment: Conduct regular assessments of the lake's fish population to adjust quotas and fishing practices as necessary for the long-term health of the fishery."
+    },
+    "votes": null,
+    "vote_details": null,
+    "winner": "Leader2"
+  },
+  {
+    "api_key_name": "GPT 3.5(Turbo)",
+    "leader_1_variant": "detailed",
+    "leader_2_variant": "basic",
+    "voting_mechanism": "runoff",
+    "mechanism_type": "runoff",
+    "agendas": {
+      "Leader1": "1. Implement a Fishing Quota System: Enforce a fishing quota system that limits the amount of fish each individual or business can catch. This will protect the fish population from overfishing and ensure long-term sustainability.\n\n2. Community Education: Organize workshops and seminars for the local community to educate them about responsible fishing practices and the importance of preserving the lake's ecosystem. This will promote community involvement in protecting the lake.\n\n3. Regular Monitoring and Evaluation: Carry out regular checks on the fish population and the lake's health. This data will be used to evaluate the effectiveness of our policies and make necessary adjustments for improvement.\n\n4. Encourage Aquaculture: Promote the practice of aquaculture to meet the community's fish demand, reducing pressure on the lake's fish population. Local people can be trained in fish farming techniques, providing them with a sustainable source of income.",
+      "Leader2": "My agenda is to enforce stringent regulations on the fishing activities to prevent overfishing and ensure the sustainability of the fishing lake. This includes implementing a strict quota system, establishing close seasons, and conducting regular inspections to ensure compliance. Violations will be met with heavy penalties to deter any non-compliant behavior."
+    },
+    "votes": null,
+    "vote_details": null,
+    "winner": "Leader1"
+  },
+  {
+    "api_key_name": "GPT 3.5(Turbo)",
+    "leader_1_variant": "detailed",
+    "leader_2_variant": "detailed",
+    "voting_mechanism": "runoff",
+    "mechanism_type": "runoff",
+    "agendas": {
+      "Leader1": "1. Establish a Fishing Regulation Committee: This committee will consist of community members, environmental scientists, and local policymakers. They will set annual and seasonal fishing quotas based on scientific data to ensure the fish population's long-term sustainability.\n\n2. Implement a Community-Based Monitoring System: Engage local fishermen and community members in monitoring the lake's fish population and report any significant changes. This will not only involve the community but also assist in maintaining the health of the lake and the fish ecosystem.\n\n3. Provide Fishing Education and Training: Offer workshops and seminars on sustainable fishing practices and the importance of biodiversity. This will increase awareness and encourage the community to take an active role in preserving their fishing resources.\n\n4. Develop a Local Fisheries Co-op: Encourage the community to form a cooperative, promoting shared responsibility and benefits from the lake's resources. This will ensure equitable distribution, prevent overfishing, and enhance community involvement.",
+      "Leader2": "Agenda 1: Establish stringent fishing quotas, limiting the volume of fish that can be caught annually to ensure the sustainability of the fish population. This will require a comprehensive tracking system to monitor all fishing activities.\n\nAgenda 2: Implement a rigorous licensing system for fishing in the lake. Only licensed fishermen will be allowed to fish, and any violation of this rule will result in severe penalties, including heavy fines and the revocation of fishing rights.\n\nAgenda 3: Create a robust surveillance and enforcement system. This will involve routine patrols and inspections, use of advanced technologies such as drones and satellite imagery for monitoring, and a dedicated enforcement team to ensure compliance with fishing regulations.\n\nAgenda 4: Promote efficient resource use through initiatives like encouraging the use of fishing gear and methods that minimize bycatch and habitat damage, and providing training to fishermen on sustainable fishing practices."
+    },
+    "votes": null,
+    "vote_details": null,
+    "winner": "Leader1"
+  }
+]

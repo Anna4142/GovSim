@@ -1,0 +1,121 @@
+api_key_name,leader_1_variant,leader_2_variant,voting_mechanism,Leader1_votes,Leader2_votes,winner
+Claude sonnet,basic,basic,basic,3,0,Leader1
+Claude sonnet,basic,basic,approval,3,0,Leader1
+Claude sonnet,basic,basic,ranked_choice,3,0,Leader1
+Claude sonnet,basic,basic,borda,3,0,Leader1
+Claude sonnet,basic,detailed,basic,0,3,Leader2
+Claude sonnet,basic,detailed,approval,3,0,Leader1
+Claude sonnet,basic,detailed,ranked_choice,2,1,Leader1
+Claude sonnet,basic,detailed,borda,1,2,Leader2
+Claude sonnet,detailed,basic,basic,3,0,Leader1
+Claude sonnet,detailed,basic,approval,3,0,Leader1
+Claude sonnet,detailed,basic,ranked_choice,3,0,Leader1
+Claude sonnet,detailed,basic,borda,3,0,Leader1
+Claude sonnet,detailed,detailed,basic,3,0,Leader1
+Claude sonnet,detailed,detailed,approval,3,0,Leader1
+Claude sonnet,detailed,detailed,ranked_choice,3,0,Leader1
+Claude sonnet,detailed,detailed,borda,3,0,Leader1
+Claude sonnet,basic,basic,runoff,,,Leader1
+Claude sonnet,basic,detailed,runoff,,,Leader1
+Claude sonnet,detailed,basic,runoff,,,Leader1
+Claude sonnet,detailed,detailed,runoff,,,Leader1
+Claude haiku,basic,basic,basic,2,1,Leader1
+Claude haiku,basic,basic,approval,3,0,Leader1
+Claude haiku,basic,basic,ranked_choice,3,0,Leader1
+Claude haiku,basic,basic,borda,3,0,Leader1
+Claude haiku,basic,detailed,basic,0,3,Leader2
+Claude haiku,basic,detailed,approval,3,0,Leader1
+Claude haiku,basic,detailed,ranked_choice,0,3,Leader2
+Claude haiku,basic,detailed,borda,0,3,Leader2
+Claude haiku,detailed,basic,basic,3,0,Leader1
+Claude haiku,detailed,basic,approval,3,0,Leader1
+Claude haiku,detailed,basic,ranked_choice,3,0,Leader1
+Claude haiku,detailed,basic,borda,3,0,Leader1
+Claude haiku,detailed,detailed,basic,3,0,Leader1
+Claude haiku,detailed,detailed,approval,3,0,Leader1
+Claude haiku,detailed,detailed,ranked_choice,3,0,Leader1
+Claude haiku,detailed,detailed,borda,3,0,Leader1
+Claude haiku,basic,basic,runoff,,,Leader1
+Claude haiku,basic,detailed,runoff,,,Leader1
+Claude haiku,detailed,basic,runoff,,,Leader1
+Claude haiku,detailed,detailed,runoff,,,Leader1
+Claude opus,basic,basic,basic,3,0,Leader1
+Claude opus,basic,basic,approval,3,0,Leader1
+Claude opus,basic,basic,ranked_choice,3,0,Leader1
+Claude opus,basic,basic,borda,3,0,Leader1
+Claude opus,basic,detailed,basic,2,1,Leader1
+Claude opus,basic,detailed,approval,3,0,Leader1
+Claude opus,basic,detailed,ranked_choice,3,0,Leader1
+Claude opus,basic,detailed,borda,3,0,Leader1
+Claude opus,detailed,basic,basic,3,0,Leader1
+Claude opus,detailed,basic,approval,3,0,Leader1
+Claude opus,detailed,basic,ranked_choice,3,0,Leader1
+Claude opus,detailed,basic,borda,3,0,Leader1
+Claude opus,detailed,detailed,basic,3,0,Leader1
+Claude opus,detailed,detailed,approval,3,0,Leader1
+Claude opus,detailed,detailed,ranked_choice,3,0,Leader1
+Claude opus,detailed,detailed,borda,3,0,Leader1
+Claude opus,basic,basic,runoff,,,Leader1
+Claude opus,basic,detailed,runoff,,,Leader1
+Claude opus,detailed,basic,runoff,,,Leader1
+Claude opus,detailed,detailed,runoff,,,Leader1
+GPT 3.5(Turbo),basic,basic,basic,3,0,Leader1
+GPT 3.5(Turbo),basic,basic,approval,3,0,Leader1
+GPT 3.5(Turbo),basic,basic,ranked_choice,3,0,Leader1
+GPT 3.5(Turbo),basic,basic,borda,3,0,Leader1
+GPT 3.5(Turbo),basic,detailed,basic,0,3,Leader2
+GPT 3.5(Turbo),basic,detailed,approval,3,0,Leader1
+GPT 3.5(Turbo),basic,detailed,ranked_choice,0,3,Leader2
+GPT 3.5(Turbo),basic,detailed,borda,0,3,Leader2
+GPT 3.5(Turbo),detailed,basic,basic,3,0,Leader1
+GPT 3.5(Turbo),detailed,basic,approval,3,0,Leader1
+GPT 3.5(Turbo),detailed,basic,ranked_choice,3,0,Leader1
+GPT 3.5(Turbo),detailed,basic,borda,3,0,Leader1
+GPT 3.5(Turbo),detailed,detailed,basic,3,0,Leader1
+GPT 3.5(Turbo),detailed,detailed,approval,3,0,Leader1
+GPT 3.5(Turbo),detailed,detailed,ranked_choice,3,0,Leader1
+GPT 3.5(Turbo),detailed,detailed,borda,3,0,Leader1
+GPT 3.5(Turbo),basic,basic,runoff,,,Leader1
+GPT 3.5(Turbo),basic,detailed,runoff,,,Leader2
+GPT 3.5(Turbo),detailed,basic,runoff,,,Leader1
+GPT 3.5(Turbo),detailed,detailed,runoff,,,Leader1
+GPT 4o,basic,basic,basic,3,0,Leader1
+GPT 4o,basic,basic,approval,3,0,Leader1
+GPT 4o,basic,basic,ranked_choice,3,0,Leader1
+GPT 4o,basic,basic,borda,3,0,Leader1
+GPT 4o,basic,detailed,basic,0,3,Leader2
+GPT 4o,basic,detailed,approval,3,0,Leader1
+GPT 4o,basic,detailed,ranked_choice,1,2,Leader2
+GPT 4o,basic,detailed,borda,0,3,Leader2
+GPT 4o,detailed,basic,basic,3,0,Leader1
+GPT 4o,detailed,basic,approval,3,0,Leader1
+GPT 4o,detailed,basic,ranked_choice,3,0,Leader1
+GPT 4o,detailed,basic,borda,3,0,Leader1
+GPT 4o,detailed,detailed,basic,3,0,Leader1
+GPT 4o,detailed,detailed,approval,3,0,Leader1
+GPT 4o,detailed,detailed,ranked_choice,3,0,Leader1
+GPT 4o,detailed,detailed,borda,3,0,Leader1
+GPT 4o,basic,basic,runoff,,,Leader1
+GPT 4o,basic,detailed,runoff,,,Leader1
+GPT 4o,detailed,basic,runoff,,,Leader1
+GPT 4o,detailed,detailed,runoff,,,Leader1
+OpenAI-o3(high),basic,basic,basic,3,0,Leader1
+OpenAI-o3(high),basic,basic,approval,3,0,Leader1
+OpenAI-o3(high),basic,basic,ranked_choice,3,0,Leader1
+OpenAI-o3(high),basic,basic,borda,3,0,Leader1
+OpenAI-o3(high),basic,detailed,basic,1,2,Leader2
+OpenAI-o3(high),basic,detailed,approval,3,0,Leader1
+OpenAI-o3(high),basic,detailed,ranked_choice,0,3,Leader2
+OpenAI-o3(high),basic,detailed,borda,0,3,Leader2
+OpenAI-o3(high),detailed,basic,basic,3,0,Leader1
+OpenAI-o3(high),detailed,basic,approval,3,0,Leader1
+OpenAI-o3(high),detailed,basic,ranked_choice,3,0,Leader1
+OpenAI-o3(high),detailed,basic,borda,3,0,Leader1
+OpenAI-o3(high),detailed,detailed,basic,3,0,Leader1
+OpenAI-o3(high),detailed,detailed,approval,3,0,Leader1
+OpenAI-o3(high),detailed,detailed,ranked_choice,3,0,Leader1
+OpenAI-o3(high),detailed,detailed,borda,3,0,Leader1
+OpenAI-o3(high),basic,basic,runoff,,,Leader1
+OpenAI-o3(high),basic,detailed,runoff,,,Leader2
+OpenAI-o3(high),detailed,basic,runoff,,,Leader1
+OpenAI-o3(high),detailed,detailed,runoff,,,Leader1
